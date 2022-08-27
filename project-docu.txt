@@ -1,1 +1,15 @@
 npx @angular/cli new cypi --routing --style scss --prefix cyp --directory ./ --strict --dry-run
+ng add @cypress/schematic
+npm install @badeball/cypress-cucumber-preprocessor
+npm install @cypress/webpack-preprocessor
+npm install ts-loader
+
+Cucumber Configuration Doc:
+https://github.com/badeball/cypress-cucumber-preprocessor/blob/master/docs/quick-start.md
+https://github.com/badeball/cypress-cucumber-preprocessor/tree/master/examples/webpack-ts
+
+
+//Notes:
+
+ng test will run as expected with Jasmine, Karma Unit Tests
+ng e2e will run (as per configuration) cypress but it will automatically start the web application server
