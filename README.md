@@ -287,7 +287,7 @@ We should strive to push domain logic into entities making boundaries become mor
 @Injectable()
 class AccountService {
 
-    constructor(private accountRepository: AccountRepository) {...}  
+    constructor(private accountRepository: AccountRepository){}  
     
     public changeBalance(id: number, amount: number): Observable<void> {
         return this.accountRepository.findById(id).pipe(
@@ -601,7 +601,7 @@ Combining both concepts we get the following result for view models:
 ```
 abstract class ViewModel {
 
-    constructor() {}
+    constructor(){}
     
     protected transformPrice(price: string): string {
       return ... // Do something with price value
@@ -788,7 +788,7 @@ Option 4 - Factory Mapper Assignment:
 ```
 class OrderMapper {
 
-    constructor() {}
+    constructor(){}
     
     public static mapToOrder(Order, Dto): Order {
         Order.id = Dto.id;
@@ -818,7 +818,7 @@ class Order {
     public address: Address;
     public customer: Customer;
     
-    constructor() {}
+    constructor(){}
     
     public setAddress(newAddress: Address): this {
         this.address = new Address(newAddress);
@@ -875,20 +875,20 @@ The purpose of the application service is to orchestrate workflows and defining 
 ```
 @Injectable()
 class ApplicationService {
-  firstUseCase() {...}
-  secondUseCase() {...}
-  firstViewModel() {...}
-  secondViewModel() {...}
+  firstUseCase(){}
+  secondUseCase(){}
+  firstViewModel(){}
+  secondViewModel(){}
 }
 
 Example:
 
 @Injectable()
 class OrderService {
-  placeOrder() {...}
-  cancelOrder() {...}
-  getOrderForSalesView() {...}
-  getOrderForDetailsView() {...}
+  placeOrder(){}
+  cancelOrder(){}
+  getOrderForSalesView(){}
+  getOrderForDetailsView(){}
 }
 ``` 
 
@@ -909,16 +909,16 @@ The purpose of the domain service is to provide a set of business tasks that doe
 ```
 @Injectable()
 class DomainService {
-  firstBusinessTask() {...}
-  secondBusinessTask() {...}
+  firstBusinessTask(){}
+  secondBusinessTask(){}
 }
 
 Example:
 
 @Injectable()
 class MoneyTransferService {
-  transferMoney() {...}
-  calculateTransferCosts() {...}
+  transferMoney(){}
+  calculateTransferCosts(){}
 }
 ``` 
 
@@ -972,28 +972,11 @@ CQRS in the frontend design system has many advantages:
 - Immutable view models comply with the `.onPush` strategy
 - sort() and filter() pipes can be detached from templates (https://angular.io/guide/styleguide#do-not-add-filtering-and-sorting-logic-to-pipes)
 
-A view model provider may appear in different forms. It may appear as a query method in an application service, as a resolver or as special-purpose class:
+The view model provider may appear in different forms. It may appear as a query method in an application service, as a resolver or as a special-purpose class:
 
-**» CQRS with API Segregation using Feature Services**<br/>
+**» CQS using Feature Services**
 
-![](src/assets/images/Service_CQRS.png)
-
-**» CQRS with DDD Tactical Patterns using Providers**<br/>
-
-![](src/assets/images/Reactive_Flow.png)
-
-Typically, application services provide query methods for retrieving view models of domain state (CQS). However, for complicated page flows and user interfaces
-it would be inefficient to build view models in a query method, due to the large amount of additional dependencies required. Instead, we can use view model provider
-services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, UI Controller or any other component
-can use the view model provider service to retrieve presentation data. On the other hand, having a single application service for query and command actions reduces
-boilerplate code!
-
-![](src/assets/images/QuerySideService.PNG)
-
-This might seem more complex than just using a single feature service for business logic and state management.
-The level of abstraction is up to the developer and is dependent on the incoming requirements.
-
-Using a single feature service or repository service for reads and writes (CQS):
+Using a single feature service or repository service for reads and writes:
 
 ![](src/assets/images/SingleService_CQRS.png)
 
@@ -1020,6 +1003,10 @@ class ProductsService {
      
     private constructor(){}
     
+    public createProduct(){}   
+    public updateProduct(){}
+    public deleteProduct(){}
+    
     public getSelectedProductListView(): Observable<Readonly<ProductListView>[]> {
         return this.selectedProductListView$;
     }
@@ -1031,7 +1018,22 @@ class ProductsService {
 }
 ```
 
-The single service approach makes it difficult to gather multiple sources and could lead to circular dependencies with other feature services.
+The single feature service approach can make it difficult to integrate data from multiple sources and could lead to circular dependencies when using other feature services.
+
+**» CQRS with DDD Tactical Patterns using Providers**<br/>
+
+![](src/assets/images/Reactive_Flow.png)
+
+Typically, application services provide query methods for retrieving view models of domain state (CQS). However, for complicated page flows and user interfaces
+it would be inefficient to build view models in a query method, due to the large amount of additional dependencies required. Instead, we can use view model provider
+services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, UI Controller or any other component
+can use the view model provider service to retrieve presentation data. On the other hand, having a single application service for query and command actions reduces
+boilerplate code!
+
+![](src/assets/images/QuerySideService.PNG)
+
+This might seem more complex than just using a single feature service for business logic and state management.
+The level of abstraction is up to the developer and is dependent on the incoming requirements.
 
 **» CQRS with Commands and Queries using the Command Pattern**<br/>
 
@@ -1241,7 +1243,7 @@ interface Repository<T, ID> {
 }
 
 class CustomerRepository implements Repository<Customer, ID> {
-    constructor(private customers: Customer[]) {...}
+    constructor(private customers: Customer[]){}
 }
 ```
 
@@ -1261,7 +1263,7 @@ export class LoadingService{
 ```
 @Injectable()
 export class BreakpointObserver {
-    public matches(...): Observable<boolean> {};
+    public matches(...): Observable<boolean>{};
 }
 ```
 

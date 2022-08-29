@@ -65,6 +65,12 @@ export default defineConfig({
     specPattern: "**/*.feature",
     supportFile: false,
     setupNodeEvents,
+    retries: {
+    // Default is 0
+      "runMode": 2,
+      // Default is 0
+      "openMode": 0
+    }
   },
 
   component: {
