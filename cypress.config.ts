@@ -52,6 +52,10 @@ export default defineConfig({
     viewportHeight: 760,
     viewportWidth: 1080,
     trashAssetsBeforeRuns: true,
+    screenshotOnRunFailure: false,
+    supportFile: false,
+    videosFolder: "cypress/videos",
+    screenshotsFolder: "cypress/screenshots",
     fixturesFolder: "cypress/fixtures",
     downloadsFolder: "dist/cypress/downloads",
     chromeWebSecurity: false,
@@ -62,14 +66,18 @@ export default defineConfig({
     video: false,
    /* defaultCommandTimeout: 10000,*/
    /* blockHosts: ["*google-analytics.com", "*googletagmanager.com"],*/
-    specPattern: "**/*.feature",
-    supportFile: false,
+    specPattern: ["cypress/e2e/**/*.feature", "cypress/e2e/**/*.cy.{js,jsx,ts,tsx}"],
     setupNodeEvents,
     retries: {
     // Default is 0
       "runMode": 2,
       // Default is 0
       "openMode": 0
+    },
+    env: {
+      base_url: "http://localhost:4200",
+      login_url: '/login',
+      products_url: '/products'
     }
   },
 

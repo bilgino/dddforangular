@@ -1189,15 +1189,14 @@ class Customer {
 
 **» Shared Repository Pattern**<br/>
 
-The shared repository pattern provides a central data storage unit where we share state and communicate state transitions along with transformations.
-Adhering to Domain-Driven Design concepts, the repository pattern is a layer (domain service) between domain objects and the database. It's used as a source of domain
+The shared repository pattern provides a central storage unit where we share state and communicate state transitions along with transformations.
+In the context of Domain-Driven Design, the repository pattern is a layer (domain service) between domain objects and the database. It's used as a source of domain
 objects and provides the abstraction over data access.
 
-However, from the viewpoint of frontend development, the question arises of where to store the UI state such as a user-selected table row?
-Assuring that UI state doesn't leak through multiple layers or surrounding services, we store all the domain related UI state in the last layer of dataflow, that is, the repository.
-Separating the UI state in application services and domain state in repositories might result in circular dependencies and compiler error.
-Unlike the Redux pattern where all the state is located in one single central store, we use to the repository pattern as data IO design strategy to decentralize state.
-Repositories can be used for all types of objects including view model objects or UI properties.
+However, from the viewpoint of frontend development, the question arises of where to store UI related state such as a user-selected table row?
+Assuring that UI state doesn't leak through surrounding services, we endorse to store the domain related UI state in the last layer of dataflow, that is, the repository.
+Storing UI state in application services can lead to circular dependencies and compiler errors. Unlike the Redux pattern where all the state is located in one single central store, 
+we use to the repository pattern as data IO design strategy to decentralize state. Repositories can be used for all types of objects including view model objects or UI properties.
 
 Angular's built-in change detection allows us to synchronize state transitions through `getter` methods. However, RxJS observables provide more flexibility and simplifies
 asynchronous data processing for complex use cases.
