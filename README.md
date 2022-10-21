@@ -36,7 +36,7 @@ resulting in loose coupling between the actual logic and infrastructure logic.
 
 A central concept of Domain-Driven Design is that the domain model is kept isolated from other concerns of the application. Ideally, the
 domain model is self-contained and focused on abstracting the business domain. Typically, frontend business applications validate business rules that
-are reflected in the UI layer, especially in SPAs when navigating through HTML forms that have cross-dependencies in terms of composite business rules.
+are reflected in the presentation layer, especially in SPAs when navigating through HTML forms that have cross-dependencies in terms of composite business rules.
 
 As an example, in an ecommerce system, say the business demands that: "no order should be accepted, if the order items are less than 3".
 Adhering to this business rule, we wouldn't display the |place order| button, if the basket is empty. Other examples include offline applications (PWAs)
@@ -73,30 +73,30 @@ because vertical slicing isn't mandatory. The main reasons for modular segmentat
 
 **» Abstraction Layers**<br/>
 
-- Presentation Layer: UI Components / Widgets, UI Services
+- Presentation Layer: View Components, UI Services
 - Application Layer: Use Case Services, View Models (Providers), Factories <br/>
-- Domain Layer: Aggregates, Entities, Value Objects, Factories, Domain Services <br/>
+- Domain Layer: Entities, Value Objects, Collections, Factories, Domain Services <br/>
 - Infrastructure Layer: Repositories <br/>
 
 **» Service Layers**<br/>
 
 - User Interface services carry out dialog, navigation and interaction concepts
 - Application services carry out business use cases and are stateless and procedural
-- Domain services carry out business concepts or processes that don't fit inside entities or value objects
+- Domain services carry out business processes that don't fit inside entities or value objects
 - Infrastructure services helps us to separate technical concepts from business concepts <br/>
 
 **» Validation Layers**<br/>
 
-- Application layer: Data types (null, undefined), format (length, empty, whitespace), schema (email, credit-card)
-- Domain layer: Business Rules, Business Invariants<br/>
+- Application layer (Data Validation Errors): Data types (null, undefined), format (length, empty, whitespace), schema (email, credit-card)
+- Domain layer (Business Rule Violations): Business Rules, Business Invariants<br/>
 - Infrastructure layer: JSON, XML and String serialization<br/>
 
 **» Angular Adoption**<br/>
 
-- Presentation layer: Views (Templates), Directives, Pipes, Animations, Forms
-- Application layer: View Component Classes, Services, Guards, Validator Functions, Factories <br/>
+- Presentation layer: Components, Directives, Pipes, Animations, UI Modules
+- Application layer: Services, Resolvers, Guards, Validator Functions, Factories <br/>
 - Domain layer: Classes, Interfaces, Services, Factories <br/>
-- Infrastructure layer: Resolvers, Interceptors <br/>
+- Infrastructure layer: Interceptors <br/>
 
 Examples:<br/>
 
@@ -174,7 +174,7 @@ https://angular.io/guide/styleguide#overall-structural-guidelines. This will be 
 ![](src/assets/images/scaffolding.png)
 
 The scaffolding proposed provides inspiration for a discussion of opportunities. Feel free to play around with the folder structure in order to reorganize
-large amounts of code bases for different purposes.
+large code base for different purposes.
 
 ## Models
 
@@ -199,7 +199,7 @@ because it doesn't include business logic and can't protect its invariants. Furt
 domain logic from leaking into other layers or surrounding services. However, if your frontend application doesn't contain any domain logic, it's totally fine to use anemic models!
 The following example shows the negative side effect of anemic domain models.
 
-Domain logic is coupled to the client (UI controller):
+Domain logic is coupled to the client (view controller):
 
 **»  Effects of Anemic Domain Models** <br/>
 ```
@@ -248,9 +248,9 @@ class Employee {
 }
 ```
 
-In the second example, domain logic is decoupled from the UI controller. Encapsulation protects the integrity of the model data.
+In the second example, domain logic is decoupled from the view controller. Encapsulation protects the integrity of the model data.
 Keeping the model as independent as possible improves reusability and allows easier refactoring.
-Neither domain state nor domain logic should be written as part of the UI controller. It's the job of the domain layer!
+Neither domain state nor domain logic should be written as part of the view controller. It's the job of the domain layer!
 
 Consequently, using feature services for structural and behavioral modeling while domain models remain pure value containers is another
 common bad practice in Angular projects and known as:
@@ -460,10 +460,10 @@ View models are mere data objects and usually don't contain any domain behavior.
 View models are supportive in providing data to the view and might extend super view model classes to inherit common properties or transformations.
 They are typically created by merging two or more existing models into one model and are an essential part of every good frontend architecture.
 
-The view model should hold the data necessary to render the UI if:
+The view model should hold the data necessary to render the view if:
 
 - View demands a subset of one or more domain model properties
-- View demands additional properties mixed up with UI related properties
+- View demands additional properties mixed up with view related properties
 
 **» View Model Checklist:**<br/>
 
@@ -471,9 +471,9 @@ The view model should hold the data necessary to render the UI if:
 - Should be immutable and has properties of type `readonly string`
 - Behaves like a value object, also called a data transfer object
 - Might or might not have dependencies
-- Should be located in its own file, repository service or UI container component
+- Should be located in its own file, repository service or view container component
 - The name ends with the suffix -View e.g. UserProfileView, UserListView, UserDetailsView
-- The name of the view model is equivalent to the name of the UI Component e.g. UserListComponent
+- The name of the view model is equivalent to the name of the view component e.g. UserListComponent -> UserListView
 
 Example:
 
@@ -500,7 +500,7 @@ newOrderViewModel.balance = -44;
 ```
 
 In the preceding example, data transformation takes place in the same view model class. A better approach would be to use a dedicated component such as a mapper, translator,
-factory or an abstract super class that performs all UI-related transformations. In this way, we decouple the transformation responsibilities to promote code reusability by subclassing.
+factory or an abstract super class that performs all view-related transformations. In this way, we decouple the transformation responsibilities to promote code reusability by subclassing.
 
 ```
 abstract class ViewModel {
@@ -797,7 +797,7 @@ class OrderMapper {
         return Order;
     }
     
-    public static mapFromOrder(Order, Dto): Dto {
+    public static mapToOrderView(Order, Dto): Dto {
         Dto.id = Order.id;
         Dto.status = Order.Status;
         Dto.total = Order.total;
@@ -851,7 +851,7 @@ server response schema to a complex object graph (domain model):
 
 For example, HATEOAS embraces hyperlinks between external resources to make transitions through the applications state by navigating links.
 However, mapping links to a client-side domain model isn't possible! When consuming REST APIs, very often multiple HTTP request need to be performed
-asynchronously to build a model for a specific use case of the UI layer. If the HATEOAS pattern forms links in the response schema, it constrains the UI layer
+asynchronously to build a model for a specific use case of the presentation layer. If the HATEOAS pattern forms links in the response schema, it constrains the presentation layer
 to incorporate with the REST API in a synchronous way. **UX designers usually don't model their interaction-, navigation- or screen patterns around hypermedia APIs**.
 Furthermore, the Angular router engine doesn't comply with the URI templates of hypermedia formats. HATEOAS might decouple the backend from the frontend,
 but it couples the frontend to the backend. Although the Angular router engine adheres to the navigational behaviour of hypermedia systems, we should avoid
@@ -859,7 +859,7 @@ HATEOAS for web frontend applications!
 
 ## Services
 
-Singleton services are important building blocks in Angular applications. Most of the functionality that doesn't belong to UI components typically
+Singleton services are important building blocks in Angular applications. Most of the functionality that doesn't belong to view components typically
 resides in the service layer. We will adhere to the service layer in the form of application-, domain- and infrastructure services conform
 to Domain-Driven Design practices.
 
@@ -871,6 +871,7 @@ The purpose of the application service is to orchestrate workflows and defining 
 - They are stateless and procedural, but sometimes need to hold state of a user journey or business flow
 - They may use a domain service to perform a domain-specific task
 - They are also the place to elaborate view models of domain state
+- Application service methods are also called command handlers
 
 ```
 @Injectable()
@@ -887,14 +888,19 @@ Example:
 class OrderService {
   placeOrder(){}
   cancelOrder(){}
+  trackOrder(){}
+  confirmOrder(){}
+  fullfillOrder(){}
   getOrderForSalesView(){}
+  getOrderForListView(){}
   getOrderForDetailsView(){}
 }
 ``` 
 
-When application services carry out use cases, it may be a good idea to write use cases that require less logic in UI controllers, like in the
-MVC pattern. However, we don't want to hide use cases from the rest of the application and instead use special-purpose classes! In addition, we want to share
-state and logic of application services with other Angular components such as resolvers, guards, interceptors or UI components.
+When application services coordinate use cases of the application, it would be a good to add use cases with less logic in view controllers, like in the
+MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we can share state and logic with other Angular components 
+such as resolvers, guards and interceptors. The main reason why we add the logic in application services instead of view controllers is that during 
+router navigation our components are destroyed, and so is the application logic. 
 
 **» Domain Service Objects**<br/>
 
@@ -902,9 +908,9 @@ The purpose of the domain service is to provide a set of business tasks that doe
 
 - They perform operations and calculations requiring input from multiple domain entities to validate composite business rules of object compositions
 - They have no identity, and they are stateless and procedural
-- A domain service can use a domain entity, or a domain entity can use a domain service
-- Repositories are domain services, if not used through interfaces (DIP)
-- Domain service don't just perform CRUD operations, which belongs to the repository API
+- A domain service can use a domain entity, or a domain entity can use a domain service (Impure Domain Model!)
+- Repositories are domain services, if not applicable to DIP
+- Domain service don't just perform *RUD operations, which belongs to the repository
 
 ```
 @Injectable()
@@ -922,8 +928,8 @@ class MoneyTransferService {
 }
 ``` 
 
-Sometimes it's difficult to distinguish an application service from a domain service. An important indication here is that the name of the service
-is not the decisive factor, but rather the task that needs to be performed.
+Sometimes it's difficult to make a clear separation between application service and domain service. An important indication here is that the name of the service
+is not the decisive factor, but rather the task that needs to be performed. When in doubt, we can also waive domain services. 
 
 **» Infrastructure Service Objects**<br/>
 
@@ -948,19 +954,19 @@ The CQRS pattern enables us to answer different use cases with the respective da
 replicate back to the view model (read side), that is, reactive projection through observables.
 
 A reactive API exposes hot observables (BehaviorSubjects etc.) to manage the complexity of asynchronous data handling. If we share data with
-other components, we must keep track of state transitions to prevent stale data and keep the UI in sync. RxJS provides us great operators to
+other components, we must keep track of state transitions to prevent stale data and keep the view in sync. RxJS provides us great operators to
 implement the "projection phase" between the read and write side, which we will discuss shortly as "Projection Patterns".
 
 ## CQRS
 
 With traditional CRUD-based web applications conform to the REST architectural style and the single data model approach, we may fall into the situation
 where we have to stitch together several resources to build a rich (view) model. Even in the case of RPC-style Web APIs, it's likely that we will encounter
-problems of this kind. Developers often use UI controller methods to build view models that in the end leads to monolithic UI controllers:
+problems of this kind. Developers often use view controller methods to build view models that in the end leads to monolithic view controllers:
 
 ![](src/assets/images/Up_Down_Flow.png)
 
 The domain model focuses on business logic rather than presentation needs. Having a view model provider to manage complicated page flows and user
-interfaces allows us to query the appropriate view model for different UI patterns. A view model provider is a perfect fit to pre-compute filtering and sorting
+interfaces allows us to query the appropriate view model for different view patterns. A view model provider is a perfect fit to pre-compute filtering and sorting
 logic (https://angular.io/guide/styleguide#style-04-13). That is, the CQRS pattern helps us to avoid over-bloated all-in-one models.
 The CQRS pattern may overcomplicate a frontend application, instead of simplifying it. Use it with care!
 
@@ -1025,15 +1031,15 @@ The single feature service approach can make it difficult to integrate data from
 ![](src/assets/images/Reactive_Flow.png)
 
 Typically, application services provide query methods for retrieving view models of domain state (CQS). However, for complicated page flows and user interfaces
-it would be inefficient to build view models in a query method, due to the large amount of additional dependencies required. Instead, we can use view model provider
-services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, UI Controller or any other component
-can use the view model provider service to retrieve presentation data. On the other hand, having a single application service for query and command actions reduces
+it would be inefficient to build view models in a query method, due to the large number of additional dependencies required. Instead, we can use view model provider
+services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, view Controller or any other component
+can use the view model provider service to retrieve presentation data. On the other hand, having a single application service for reads and writes reduces
 boilerplate code!
 
 ![](src/assets/images/QuerySideService.PNG)
 
-This might seem more complex than just using a single feature service for business logic and state management.
-The level of abstraction is up to the developer and is dependent on the incoming requirements.
+This might seem more complex than just using a single feature service for business logic and state management. A fixed layered architecture style would likely 
+be perceived as overkill for small applications and can lead to the layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
 
 **» CQRS with Commands and Queries using the Command Pattern**<br/>
 
@@ -1109,7 +1115,7 @@ class OrderViewProvider {
           distinct(...),
           map((...)=>{
              return translateService.translate(...);             
-          })
+          }),
           mergeMap((...)=>{
              return of([new OrderForStatusView(...)]);             
           })
@@ -1117,14 +1123,15 @@ class OrderViewProvider {
     }
     
     public getOrderForDetailsViewByProductId(id:number): Observable<Array<OrderForDetailsView>> {
-        return combineLatest([this.orderRepository.getAll(), this.productRepository.getAll()])
+        return combineLatest(this.productRepository.getAll())
         .pipe(
+          combineLatestWith(this.orderRepository.getAll());
+          map(([d1, d2]),
           filter(...),
           groupBy(...),
           mergeMap([...]) => {
             return of([new OrderForDetailsView(...)]);           
-          }),
-          shareReplay(1)
+          })
         )        
     }
 }
@@ -1160,7 +1167,7 @@ There are many state types to deal with:
 | Type              | Example                  | Location                                | 
 |-------------------|--------------------------|-----------------------------------------|
 | Domain State      | Entity, Resource, Model  | Im-Memory, Browser API                  |
-| UI State          | Position, Panel, Zoom    | Im-Memory, Browser API                  |
+| View State        | Position, Panel, Zoom    | Im-Memory, Browser API                  |
 | Router State      | /?sort /?filter /?search | Browser History API                     |
 | Draft State       | Comments, Mails          | In-Memory, Browser Storage API          |
 | Session State     | Tokens, Keys             | In-Memory, Browser Storage API, Cookies |
@@ -1193,10 +1200,10 @@ The shared repository pattern provides a central storage unit where we share sta
 In the context of Domain-Driven Design, the repository pattern is a layer (domain service) between domain objects and the database. It's used as a source of domain
 objects and provides the abstraction over data access.
 
-However, from the viewpoint of frontend development, the question arises of where to store UI related state such as a user-selected table row?
-Assuring that UI state doesn't leak through surrounding services, we endorse to store the domain related UI state in the last layer of dataflow, that is, the repository.
-Storing UI state in application services can lead to circular dependencies and compiler errors. Unlike the Redux pattern where all the state is located in one single central store, 
-we use to the repository pattern as data IO design strategy to decentralize state. Repositories can be used for all types of objects including view model objects or UI properties.
+However, from the viewpoint of frontend development, the question arises of where to store view related state such as a user-selected table row?
+Assuring that view state doesn't leak through surrounding services, we endorse to store the domain related view state in the last layer of dataflow, that is, the repository.
+Storing view state in application services can lead to circular dependencies and compiler errors. Unlike the Redux pattern where all the state is located in one single central store, 
+we use the repository pattern as data IO design strategy to decentralize state. Repositories can be used for all types of objects including view model objects or view properties.
 
 Angular's built-in change detection allows us to synchronize state transitions through `getter` methods. However, RxJS observables provide more flexibility and simplifies
 asynchronous data processing for complex use cases.
