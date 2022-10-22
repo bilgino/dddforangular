@@ -456,9 +456,9 @@ The aggregate entity should be negotiated with the Web API as a conceptual whole
 
 **» View Model**<br/>
 
-View models are mere data objects and usually don't contain any domain behavior. Hence, they are not a part of the domain layer.
-View models are supportive in providing data to the view and might extend super view model classes to inherit common properties or transformations.
-They are typically created by merging two or more existing models into one model and are an essential part of every good frontend architecture.
+View models are mere data objects and usually don't contain any domain behavior. Thus, they are not a part of the domain layer. View models are supportive in 
+providing data and presentation logic to the view. They are typically created by merging two or more existing models into one model and are an essential part of 
+every good frontend architecture.
 
 The view model should hold the data necessary to render the view if:
 
