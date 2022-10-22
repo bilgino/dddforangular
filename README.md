@@ -406,10 +406,10 @@ when they don't have related invariants in the domain:
 
 **» From the Viewpoint of Frontend Development:**
 
-- Aggregates don't publish domain events and won't get out‐of‐sync due to async observables
+- Aggregates don't publish domain events and won't get out‐of‐sync due to usage of async observables
 - Inter-Aggregate references established by global IDs (primary keys) rather than by object declarations is optional
 - Since the web browser is a monolithic environment with a homogenous stack, entities can be reused everywhere by simply using a path reference
-- If the backend architecture isn't in adherence with CQRS, aggregates will build the foundation for view models
+- If the backend architecture isn't aware of CQRS, frontend aggregates will build the foundation for view models
 
 **» Routing, REST and DDD Aggregates**<br/>
 
@@ -897,7 +897,7 @@ class OrderService {
 }
 ``` 
 
-When application services coordinate use cases of the application, it would be a good to add use cases with less logic in view controllers, like in the
+When application services coordinate use cases of the application, it would be better to add use cases with less logic in view controllers, like in the
 MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we can share state and logic with other Angular components 
 such as resolvers, guards and interceptors. The main reason why we add the logic in application services instead of view controllers is that during 
 router navigation our components are destroyed, and so is the application logic. 
@@ -928,7 +928,7 @@ class MoneyTransferService {
 }
 ``` 
 
-Sometimes it's difficult to make a clear separation between application service and domain service. An important indication here is that the name of the service
+Sometimes it's difficult to make a clear separation between application services and domain services. An important indication here is that the name of the service
 is not the decisive factor, but rather the task that needs to be performed. When in doubt, we can also waive domain services. 
 
 **» Infrastructure Service Objects**<br/>
@@ -1032,7 +1032,7 @@ The single feature service approach can make it difficult to integrate data from
 
 Typically, application services provide query methods for retrieving view models of domain state (CQS). However, for complicated page flows and user interfaces
 it would be inefficient to build view models in a query method, due to the large number of additional dependencies required. Instead, we can use view model provider
-services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, view Controller or any other component
+services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, view controller or any other component
 can use the view model provider service to retrieve presentation data. On the other hand, having a single application service for reads and writes reduces
 boilerplate code!
 
