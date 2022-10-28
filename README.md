@@ -886,14 +886,14 @@ Example:
 
 @Injectable()
 class OrderService {
-  placeOrder(){}
-  cancelOrder(){}
-  trackOrder(){}
-  confirmOrder(){}
-  fullfillOrder(){}
-  getOrderForSalesView(){}
-  getOrderForListView(){}
-  getOrderForDetailsView(){}
+  placeOrder(): void{}
+  cancelOrder(): void{}
+  trackOrder(): void{}
+  confirmOrder(): void{}
+  fullfillOrder(): void{}
+  getOrderForSalesView(): OrderForSalesView{}
+  getOrderForListView(): OrderForListView{}
+  getOrderForDetailsView(): OrderForDetailsView{}
 }
 ``` 
 
@@ -923,8 +923,8 @@ Example:
 
 @Injectable()
 class MoneyTransferService {
-  transferMoney(){}
-  calculateTransferCosts(){}
+  transferMoney(accountRepository: AccountRepository):void{}
+  calculateTransferCosts():number{}
 }
 ``` 
 
@@ -1185,12 +1185,12 @@ class Customer {
     private firstName: string;
     private lastName: string;
         
-    get firstName(){}
-    set firstName(){}
-    get lastName(){}
-    set lastName(){}
+    get firstName(): string{}
+    set firstName(): void{}
+    get lastName(): string{}
+    set lastName(): void{}
     
-    public isLoggedIn(){}
+    public isLoggedIn():boolean{}
 }
 ``` 
 
