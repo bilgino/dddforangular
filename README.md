@@ -113,7 +113,7 @@ strives two of the most important software design principles, which are single r
 
 ## Modules
 
-The angular.io styleguide states categories for organizing blocks of code: **Shared Modules** and **Widget Modules** contain the
+The angular.io styleguide states categories for chunking blocks of code: **Shared Modules** and **Widget Modules** contain the
 most commonly used code, while **Domain Modules** encapsulate blocks of code that is not intended to be used outside that module
 makes **Domain Modules** a good candidate for the bounded context pattern. The **Service Module** shares its content application
 wide as singletons. The **Root Module** includes several domain modules. That is, the entry point is the root module. For a more
@@ -144,6 +144,10 @@ Following checklist helps us to facilitate the orchestration of ngModules:<br/>
 - Module content can be exported without being imported
 - Module content comprises only Angular components. Interfaces, POTOs are outside the module scope
 - Transitive dependencies aren't visible, **reexport** them to make them available to other modules
+
+As the number of module types can become overwhelming and difficult to apply correctly, it can lead developers to make incorrect decisions.
+Every module type serves a different purpose! In the context of domain architecture and partitioning, domain modules serve as a foundation
+for our DDD development approach.
 
 **» Bounded Context Pattern**<br/>
 
