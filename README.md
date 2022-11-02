@@ -154,16 +154,12 @@ for our DDD development approach.
 The bounded context pattern divides the domain model into related domain fragments. In a service-based environment a bounded context marks the boundaries of an application service.
 An application service is a concretion of the bounded context pattern! This is similar to **Domain Modules** where we mark the boundaries based on features. Applying the bounded
 context pattern to domain modules allows us to structure Angular applications in a domain-driven approach. Possibly the most difficult part is to identify the bounded context and aggregate boundaries.
-
-The frontend development team should strive to create a context map expressing the relations between domain modules. A bounded context should consist of at least one aggregate
-and might consist of several aggregates.
-
-**A bounded context can be assigned either to an entire page or to page segments.**
+A bounded context should consist of at least one aggregate and might consist of several aggregates. **A bounded context can be assigned either to an entire page or to page segments.**
 
 Since a bounded context represents one or more aggregates, it's sufficient to couple the bounded context to the root URL (root-resource):
 `/BoundedContextA/*API`; `/BoundedContextB/*API`.
 
-Interrelationship between the bounded context pattern and Angular domain modules:
+Frontend development teams should strive to create a context map expressing the relations between domain modules and bounded contexts:
 
 ![](src/assets/images/BoundedContext.png)
 
@@ -172,10 +168,10 @@ The interrelationship between Angular, REST and DDD aggregates requires more lab
 
 **» Folder Structure**<br/>
 
-A common practice in Angular projects is to structure the code base into `/core`, `/shared`, `/features` folders according the **LIFT** principle and the angular.io styleguide:
-https://angular.io/guide/styleguide#overall-structural-guidelines. This will be the foundation for our domain-driven folder structure:
+A common practice in Angular projects is to structure the code into `/core`, `/shared`, `/features` folders according to **LIFT** and the angular.io styleguide:
+https://angular.io/guide/styleguide#overall-structural-guidelines. This will be the foundation for our domain-oriented folder structure:
 
-![](src/assets/images/scaffolding.png)
+![](src/assets/images/scaffolding-ddd.png)
 
 The scaffolding proposed provides inspiration for a discussion of opportunities. Feel free to play around with the folder structure in order to reorganize
 large code base for different purposes.
@@ -375,11 +371,10 @@ class Order {
 
     contructor(){}
     
-    public placeOrder(){}
     public getOrderItems(){}
-    public totalQuantity(){}
-    public changeDeliveryAddress(){}
     public getCustomerId(){}
+    public calcTotalQuantity(){}
+    public changeDeliveryAddress(){}
 }
 ```
 
@@ -542,7 +537,7 @@ in a reactive stream and hand over the result to an object factory.
 
 **» (Domain) Object Factory Pattern:**<br/>
 
-Objects can be constructed using regular constructors or using static factories. The object factory pattern helps us to create complex objects like aggregates that involve the
+Objects can be constructed using regular constructors or using static factories. The object factory pattern helps us to build complex objects like aggregates that involve the
 creation of other related objects and more importantly assists in type safety with ES6+ features such as spread, rest, destructuring where type information might get lost.
 Object factories and mappers help us to manage immutability by retrieving new instances when needed, instead of using generic JSON.parse/.stringify or deep-cloning algorithms.
 
@@ -871,10 +866,10 @@ to Domain-Driven Design practices.
 
 The purpose of the application service is to orchestrate workflows and defining the use cases of the application.
 
-- Application services don't represent domain concepts, and they don't contain business rules
+- Application services don't represent domain concepts, and they don't implement business rules
 - They are stateless and procedural, but sometimes need to hold state of a user journey or business flow
 - They may use a domain service to perform a domain-specific task
-- They are also the place to elaborate view models of domain state
+- They are also the place to elaborate view models out of domain state
 - Application service methods are also called command handlers
 
 ```
@@ -908,9 +903,10 @@ router navigation our components are destroyed, and so is the application logic.
 
 **» Domain Service Objects**<br/>
 
-The purpose of the domain service is to provide a set of business tasks that doesn't fit inside entities or value objects.
+The purpose of a domain service is to provide a set of business tasks that don't fit inside entities or value objects.
 
-- They perform operations and calculations requiring input from multiple domain entities to validate composite business rules of object compositions
+- They perform operations and calculations requiring input from multiple domain entities to validate composite business rules 
+- They transform domain object compositions to new domain object representations
 - They have no identity, and they are stateless and procedural
 - A domain service can use a domain entity, or a domain entity can use a domain service (Impure Domain Model!)
 - Repositories are domain services, if not applicable to DIP
@@ -940,10 +936,6 @@ is not the decisive factor, but rather the task that needs to be performed. When
 The purpose of the infrastructure service is to handle cross-cutting concerns such as tracing services or persistence services.
 They should never call a domain entity, but they can be called by domain entities!
 
-**» User Interface Service Objects**<br/>
-
-UI services manage UI Logic and UI State such as a loading spinner service.
-
 **» Stateful Services vs. Stateful Repositories**<br/>
 
 Just as mentioned before, it's common for Angular projects to use feature services for business functionality and state management.
@@ -964,15 +956,14 @@ implement the "projection phase" between the read and write side, which we will 
 ## CQRS
 
 With traditional CRUD-based web applications conform to the REST architectural style and the single data model approach, we may fall into the situation
-where we have to stitch together several resources to build a rich (view) model. Even in the case of RPC-style Web APIs, it's likely that we will encounter
-problems of this kind. Developers often use view controller methods to build view models that in the end leads to monolithic view controllers:
+where we need to stitch together multiple resources to build a rich (view) model. Developers often use view controller methods to accomplish this task:
 
 ![](src/assets/images/Up_Down_Flow.png)
 
 The domain model focuses on business logic rather than presentation needs. Having a view model provider to manage complicated page flows and user
 interfaces allows us to query the appropriate view model for different view patterns. A view model provider is a perfect fit to pre-compute filtering and sorting
 logic (https://angular.io/guide/styleguide#style-04-13). That is, the CQRS pattern helps us to avoid over-bloated all-in-one models.
-The CQRS pattern may overcomplicate a frontend application, instead of simplifying it. Use it with care!
+The CQRS pattern may overcomplicate frontend architectures, instead of simplifying it. Use it with care!
 
 CQRS in the frontend design system has many advantages:
 
@@ -982,11 +973,11 @@ CQRS in the frontend design system has many advantages:
 - Immutable view models comply with the `.onPush` strategy
 - sort() and filter() pipes can be detached from templates (https://angular.io/guide/styleguide#do-not-add-filtering-and-sorting-logic-to-pipes)
 
-The view model provider may appear in different forms. It may appear as a query method in an application service, as a resolver or as a special-purpose class:
+The view model provider may appear in different forms. The provider may appear in form of a query method in an application service, a resolver or a query object:
 
 **» CQS using Feature Services**
 
-Using a single feature service or repository service for reads and writes:
+Using a single feature service (repository service) for reads and writes:
 
 ![](src/assets/images/SingleService_CQRS.png)
 
@@ -1028,14 +1019,34 @@ class ProductsService {
 }
 ```
 
-The single feature service approach can make it difficult to integrate data from multiple sources and could lead to circular dependencies when using other feature services.
+The single feature service approach makes it difficult to collect data from multiple sources and can lead to circular dependencies when using by other feature services.
 
-**» CQRS with DDD Tactical Patterns using Providers**<br/>
+**» CQRS using Feature Services for Reads and Writes**
 
-![](src/assets/images/Reactive_Flow.png)
+![](src/assets/images/Service_CQRS.png)
 
-Typically, application services provide query methods for retrieving view models of domain state (CQS). However, for complicated page flows and user interfaces
-it would be inefficient to build view models in a query method, due to the large number of additional dependencies required. Instead, we can use view model provider
+**» CQRS using Command and Query Handlers and DDD Patterns**<br/>
+
+![](src/assets/images/Service_CQRS_CQ.png)
+
+```
+class CommandHandlers {
+  handleUseCaseCommand1(cm1) {...}
+  handleUseCaseCommand2(cm2) {...}
+}
+
+class QueryHandlers {
+  handleUseCaseQuery1() {...}
+  handleUseCaseQuery2(qm2) {...}
+}
+
+* cm=Command Model
+* qm=Query Model
+```
+**» CQ(R)S using Application Services**<br/>
+
+Typically, application services provide query methods for retrieving view models out of domain state (CQS). However, for complicated page flows and user interfaces
+it would be inefficient to build view models in a query method, due to the large number of additional dependencies. Instead, we can use view model provider
 services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, view controller or any other component
 can use the view model provider service to retrieve presentation data. On the other hand, having a single application service for reads and writes reduces
 boilerplate code!
@@ -1097,8 +1108,8 @@ class Order extends OrderViewModel {
 ``` 
 
 This implementation has some drawbacks either. It only works for a single entity!
-What if a view model requires several sources? We can create a special-purpose class in form of a view model provider service!
-The purpose of the view model provider service is to tailor view models for specific use cases.
+What if a view model requires several sources? We can use a special-purpose class in form of a view model provider!
+The purpose of the view model provider is to return view models for specific use cases.
 
 ```
 @Injectable()
