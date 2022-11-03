@@ -938,18 +938,18 @@ They should never call a domain entity, but they can be called by domain entitie
 
 **» Stateful Services vs. Stateful Repositories**<br/>
 
-Just as mentioned before, it's common for Angular projects to use feature services for business functionality and state management.
+As already mentioned before, it's common for Angular projects to use feature services for business logic and state management.
 We typically use stateful services if we need to share data across components or process HTTP requests and responses that perform CRUD operations.
-Adhering to DDD concepts, we will use the repository pattern in favor of an active data store. The repository pattern acts as a reactive storage unit
+Adhering to DDD concepts, we use the repository pattern in favor of an active data store. The repository pattern acts as a reactive storage unit
 for globally accessible data that can be used by other independent components. Repositories aren't only for entities, but for all objects
 including view models. Repositories often act as an anti-corruption layer enabling us to build data models without their structure
 being influenced by the underlying Web-API.
 
-Furthermore, we will introduce the CQRS pattern to stem the heavy-lift when building complicated page flows and user interfaces.
-The CQRS pattern enables us to answer different use cases with the respective data model. State transitions in the repository will immediately
-replicate back to the view model (read side), that is, reactive projection through observables.
+Furthermore, we will apply the CQRS pattern to stem the heavy-lift when building complicated page flows and user interfaces.
+The CQRS pattern enables us to answer different use cases with the respective data model. State transitions will be replicated 
+back to the view model (read side) immediately.
 
-A reactive API exposes hot observables (BehaviorSubjects etc.) to manage the complexity of asynchronous data handling. If we share data with
+A reactive API exposes hot observables (BehaviorSubjects) to manage the complexity of asynchronous data processing. If we share data with
 other components, we must keep track of state transitions to prevent stale data and keep the view in sync. RxJS provides us great operators to
 implement the "projection phase" between the read and write side, which we will discuss shortly as "Projection Patterns".
 
@@ -977,7 +977,7 @@ The view model provider may appear in different forms. The provider may appear i
 
 **» CQS using Feature Services**
 
-Using a single feature service (repository service) for reads and writes:
+Using a single feature service (repository service) writes and reads:
 
 ![](src/assets/images/SingleService_CQRS.png)
 
@@ -1021,7 +1021,7 @@ class ProductsService {
 
 The single feature service approach makes it difficult to collect data from multiple sources and can lead to circular dependencies when using by other feature services.
 
-**» CQRS using Feature Services for Reads and Writes**
+**» CQRS using Feature Services Writes and Reads**
 
 ![](src/assets/images/Service_CQRS.png)
 
@@ -1030,14 +1030,16 @@ The single feature service approach makes it difficult to collect data from mult
 ![](src/assets/images/Service_CQRS_CQ.png)
 
 ```
+@Injectable()
 class CommandHandlers {
-  handleUseCaseCommand1(cm1) {...}
-  handleUseCaseCommand2(cm2) {...}
+  handleUseCaseCommand1(cm1) {}
+  handleUseCaseCommand2(cm2) {}
 }
 
+@Injectable()
 class QueryHandlers {
-  handleUseCaseQuery1() {...}
-  handleUseCaseQuery2(qm2) {...}
+  handleUseCaseQuery1() {}
+  handleUseCaseQuery2(qm2) {}
 }
 
 * cm=Command Model
@@ -1048,7 +1050,7 @@ class QueryHandlers {
 Typically, application services provide query methods for retrieving view models out of domain state (CQS). However, for complicated page flows and user interfaces
 it would be inefficient to build view models in a query method, due to the large number of additional dependencies. Instead, we can use view model provider
 services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, view controller or any other component
-can use the view model provider service to retrieve presentation data. On the other hand, having a single application service for reads and writes reduces
+can use the view model provider service to retrieve presentation data. On the other hand, having a single application service writes and reads reduces
 boilerplate code!
 
 ![](src/assets/images/QuerySideService.PNG)
@@ -1084,7 +1086,7 @@ class Order {
 }
 ```
 
-Elaborating view models of domain entities violates the single responsibility rule!
+Elaborating view models out of domain entities violates the single responsibility rule!
 We can remove the factory methods by using abstract classes:
 
 ```
@@ -1108,7 +1110,7 @@ class Order extends OrderViewModel {
 ``` 
 
 This implementation has some drawbacks either. It only works for a single entity!
-What if a view model requires several sources? We can use a special-purpose class in form of a view model provider!
+What if a view model requires multiple sources? We can use a special-purpose class in form of a view model provider!
 The purpose of the view model provider is to return view models for specific use cases.
 
 ```
@@ -1151,22 +1153,6 @@ class OrderViewProvider {
     }
 }
 ```
-
-Injecting the view model provider service in the view component class:
-
-```
-@Component({
-  selector: 'order',
-  template: `...`,
-  providers: [OrderViewProvider]
-})
-export class OrderComponent {
-
-  constructor(private orderViewProvider: OrderViewProvider) {
-    this.orderViewProvider.getOrderForStatusViewByStatus('pending').subscribe(()=>{})
-  }
-}
-``` 
 
 View model objects can also be build in Angular resolver services!
 
