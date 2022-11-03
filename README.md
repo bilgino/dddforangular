@@ -977,7 +977,7 @@ The view model provider may appear in different forms. The provider may appear i
 
 **» CQS using Feature Services**
 
-Using a single feature service (repository service) writes and reads:
+Using a single feature service (repository service) for writes and reads:
 
 ![](src/assets/images/SingleService_CQRS.png)
 
@@ -1021,7 +1021,7 @@ class ProductsService {
 
 The single feature service approach makes it difficult to collect data from multiple sources and can lead to circular dependencies when using by other feature services.
 
-**» CQRS using Feature Services Writes and Reads**
+**» CQRS using Feature Services for Writes and Reads**
 
 ![](src/assets/images/Service_CQRS.png)
 
@@ -1038,8 +1038,8 @@ class CommandHandlers {
 
 @Injectable()
 class QueryHandlers {
-  handleUseCaseQuery1() {}
-  handleUseCaseQuery2(qm2) {}
+  handleUseCaseQuery1():ViewModel1 {}
+  handleUseCaseQuery2(qm2):ViewModel2 {}
 }
 
 * cm=Command Model
@@ -1047,7 +1047,7 @@ class QueryHandlers {
 ```
 **» CQ(R)S using Application Services**<br/>
 
-Typically, application services provide query methods for retrieving view models out of domain state (CQS). However, for complicated page flows and user interfaces
+Typically, application services provide query or command methods for retrieving view models out of domain state (CQS). However, for complicated page flows and user interfaces
 it would be inefficient to build view models in a query method, due to the large number of additional dependencies. Instead, we can use view model provider
 services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, view controller or any other component
 can use the view model provider service to retrieve presentation data. On the other hand, having a single application service writes and reads reduces
@@ -1057,6 +1057,8 @@ boilerplate code!
 
 This might seem more complex than just using a single feature service for business logic and state management. A fixed layered architecture style would likely 
 be perceived as overkill for small applications and can lead to the layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
+However, in an agile process like scrum where requirements and complexity can't be detected until it's too late, it would be more efficient to take the risk for introducing 
+a possible unnecessary pass-through layer!
 
 **» CQRS with Commands and Queries using the Command Pattern**<br/>
 
