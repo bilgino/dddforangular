@@ -146,8 +146,7 @@ Following checklist helps us to facilitate the orchestration of ngModules:<br/>
 - Transitive dependencies aren't visible, **reexport** them to make them available to other modules
 
 As the number of module types can become overwhelming and difficult to apply correctly, it can lead developers to make incorrect decisions.
-Every module type serves a different purpose! In the context of domain architecture and partitioning, domain modules serve as a foundation
-for our DDD development approach.
+Every module type serves a different purpose! In the context of domain architecture and partitioning, domain modules serve as a foundation for our DDD development approach.
 
 **» Bounded Context Pattern**<br/>
 
@@ -381,7 +380,7 @@ In the classic object-oriented programming the software model lacked of explicit
 The DDD aggregate pattern takes a contextual approach by embracing groupings of entities and value objects that are modeled around business rules and transactional boundaries inside the
 software model making the system easier to reason about. One of the most important aspects of the aggregate pattern is to protect it from being invalid and having a consistent state.
 
-**» Aggregate Entity Checklist:**
+**» Aggregate Entity Checklist**
 
 - It's a top-level core business object
 - It's bounded from the viewpoint of a business use cases
@@ -402,7 +401,7 @@ if they don't share invariants in the domain:
 
 ![](src/assets/images/Aggregate_BR.PNG)
 
-**» From the Viewpoint of Frontend Development:**
+**» From the Viewpoint of Frontend Development**
 
 - Aggregates don't publish domain events and won't get out‐of‐sync due to usage of async observables
 - Inter-Aggregate references established by global IDs (primary keys) rather than by object declarations is optional
@@ -441,7 +440,7 @@ The aggregate entity should be negotiated with the Web API as a conceptual whole
 
 ![](src/assets/images/Aggregate_ACL.PNG)
 
-**» Design Considerations:**
+**» Design Considerations**
 
 **Q**: Is building aggregates a poor choice, if requests for aggregates are rare?<br>
 **A**: It all depends on the complexity of the application, particularly of the domain layer!
@@ -463,7 +462,7 @@ The view model should hold the data necessary to render the view if:
 - View demands a subset of one or more domain model properties
 - View demands additional properties mixed up with view related properties
 
-**» View Model Checklist:**<br/>
+**» View Model Checklist**<br/>
 
 - Must have an ID property
 - Should be immutable and has properties of type `readonly string`
@@ -473,7 +472,7 @@ The view model should hold the data necessary to render the view if:
 - The name ends with the suffix -View e.g. UserProfileView, UserListView, UserDetailsView
 - The name of the view model is equivalent to the name of the view component class e.g. UserListComponent : UserListView
 
-**Example**
+**» Example**
 
 ```
 class OrderViewModel {
@@ -534,13 +533,13 @@ Due to performance implications, it's not recommendable to bind `getters` in the
 Hardcoding transformation methods in the view model class causes tight coupling. A better approach is to process data transformations such as filtering, sorting, grouping or destructuring etc.
 in a reactive stream and hand over the result to an object factory.
 
-**» (Domain) Object Factory Pattern:**<br/>
+**» (Domain) Object Factory Pattern**<br/>
 
 Objects can be constructed using regular constructors or using static factories. The object factory pattern helps us to build complex objects like aggregates that involve the
 creation of other related objects and more importantly assists in type safety with ES6+ features such as spread, rest, destructuring where type information might get lost.
 Object factories and mappers help us to manage immutability by retrieving new instances when needed, instead of using generic JSON.parse/.stringify or deep-cloning algorithms.
 
-**Example 1**
+**» Example 1**
 
 ```
 class OrderFactory {
@@ -554,7 +553,7 @@ newOrder.propertyA = ...
 newOrder.propertyB = ...
 ```
 
-**Example 2**
+**» Example 2**
 
 ```
 interface IOrder{
@@ -690,7 +689,7 @@ The structural mapper pattern performs a bidirectional transfer of data structur
 class instances used in arrays instead of having seperated JSON object declarations and type annotations. Interfaces help us to assure
 the correct data structure as contracts between the target and the source object.
 
-**Option 1** - Constructor Assignment
+Option 1 - Constructor Assignment
 
 ```
 interface IOrder {
@@ -714,7 +713,7 @@ class Order {
 const orders = [new Order({id:22,status:Status.Pending,total:450})];
 ```
 
-**Option 2** - Constructor Assignment with ES6+
+Option 2 - Constructor Assignment with ES6+
 
 ```
 class Order {
@@ -745,7 +744,7 @@ class Order {
 const orders = [new Order({id:22,status:Status.Pending})];
 ```
 
-**Option 3** - Constructor Assignment with Index Signature
+Option 3 - Constructor Assignment with Index Signature
 
 ```
 class Order {
@@ -781,7 +780,7 @@ const orders = [new Order({id:33,status:Status.PENDING})];
 
 Unfortunately, index signature assignments don't support access modifier (public, private, protected).
 
-**Option 4** - Mapper Assignment
+Option 4 - Mapper Assignment
 
 ```
 class OrderMapper {
@@ -806,7 +805,7 @@ class OrderMapper {
 const orders = [OrderMapper.mapToOrder(new Order(), {id:33,status:Status.PENDING})];
 ```
 
-**Option 5** - Builder Pattern
+Option 5 - Builder Pattern
 
 ```
 class Order {
@@ -832,14 +831,14 @@ class Order {
 const orders = [new Order().setAddress({...}).setCustomer({...})];
 ```
 
-**» Mapper Checklist:**<br/>
+**» Mapper Checklist**<br/>
 
 - Bidirectional mapping is inevitable when using model-driven forms
 - The mapper pattern in the repository service assists to build pure models 
 - The mapper pattern in the application service assists to build view models 
 - Don't map to view models in the repository service because view models may require multiple sources
 
-**» REST, HATEOAS & Mapping.**<br/>
+**» REST, HATEOAS & Mapping**<br/>
 
 When building multi-layered, distributed web applications, data transformation is among the major challenges that occur when data traverses
 all layers (data flows up and down the stack). If the domain layer has been replicated to the client side, we might need to transform the
@@ -850,10 +849,10 @@ server response schema to a complex object graph (domain model):
 For example, HATEOAS embraces hyperlinks between external resources to make transitions through the applications state by navigating links.
 However, mapping links to a client-side domain model isn't possible! When consuming REST APIs, very often multiple HTTP request need to be performed
 asynchronously to build a model for a specific use case in the presentation layer. If the applied HATEOAS pattern forms links in the response schema, it 
-may constrain the presentation layer to incorporate with REST APIs in a synchronous way. **UX designers usually don't model their interaction-, navigation- or screen patterns around hypermedia APIs**.
-Furthermore, the Angular router engine doesn't comply with the URI templates of hypermedia formats. HATEOAS might decouple the backend from the frontend,
-but it couples the frontend to the backend. Although the Angular router engine adheres to the navigational behaviour of hypermedia systems, we should avoid
-HATEOAS for web frontend applications!
+may constrain the presentation layer to incorporate with REST APIs in a synchronous way. **UX designers usually don't model their interaction-, navigation- or 
+screen patterns around hypermedia APIs**. Furthermore, the Angular router engine doesn't comply with the URI templates of hypermedia formats. HATEOAS might decouple 
+the backend from the frontend, but it couples the frontend to the backend. Although the Angular router engine adheres to the navigational behaviour of hypermedia systems,
+we should avoid HATEOAS for web frontend applications!
 
 ## Services
 
@@ -902,9 +901,9 @@ class OrderService {
 }
 ``` 
 
-When application services carry out use cases of the application, it might be a better idea to implement use cases that contain less logic directly in view controllers, like in the
-MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular components 
-such as resolvers, guards and interceptors. But the main reason why we put logic in application services instead of view controllers is that during 
+When application services carry out use cases of the application, it might be a better idea to implement use cases that contain less logic directly in view controllers, 
+like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular 
+components such as resolvers, guards and interceptors. But the main reason why we put logic in application services instead of view controllers is that during 
 a router navigation event our components will be destroyed. 
 
 **» Domain Service Objects**<br/>
@@ -1076,7 +1075,7 @@ be perceived as overkill for small applications and can lead to the layered cake
 However, in an agile process like scrum where requirements and complexity can't be detected until it's too late, it would be more efficient to take the risk for introducing 
 a possibly unnecessary pass-through layer. "You are gonna need it"!
 
-**» CQRS with Commands and Queries using the Command Pattern**<br/>
+**» CQRS using the Command Pattern**<br/>
 
 @TODO [text]
 @TODO [image]
