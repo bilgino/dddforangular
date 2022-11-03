@@ -1047,18 +1047,14 @@ class QueryHandlers {
 ```
 **» CQ(R)S using Application Services**<br/>
 
-Typically, application services provide query or command methods for retrieving view models out of domain state (CQS). However, for complicated page flows and user interfaces
-it would be inefficient to build view models in a query method, due to the large number of additional dependencies. Instead, we can use view model provider
-services to facilitate access to view models in a more efficient way. Consequently, an application service, resolver service, view controller or any other component
-can use the view model provider service to retrieve presentation data. On the other hand, having a single application service writes and reads reduces
-boilerplate code!
+Typically, application services provide query and command methods for retrieving view models out of domain state (CQS). 
 
 ![](src/assets/images/QuerySideService.PNG)
 
 This might seem more complex than just using a single feature service for business logic and state management. A fixed layered architecture style would likely 
 be perceived as overkill for small applications and can lead to the layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
 However, in an agile process like scrum where requirements and complexity can't be detected until it's too late, it would be more efficient to take the risk for introducing 
-a possible unnecessary pass-through layer!
+a possible unnecessary pass-through layer. "You are gonna need it"!
 
 **» CQRS with Commands and Queries using the Command Pattern**<br/>
 
@@ -1111,13 +1107,13 @@ class Order extends OrderViewModel {
 }
 ``` 
 
-This implementation has some drawbacks either. It only works for a single entity!
-What if a view model requires multiple sources? We can use a special-purpose class in form of a view model provider!
+This implementation has some drawbacks either. It only works for a single entity! What if a view model requires multiple sources? 
+We can use a special-purpose class in form of a query handler (view model provider)!
 The purpose of the view model provider is to return view models for specific use cases.
 
 ```
 @Injectable()
-class OrderViewProvider {
+class OrderQueryHandlers {
    
     constructor(
       private orderRepository: OrderRepository,             
