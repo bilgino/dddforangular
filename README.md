@@ -153,7 +153,7 @@ for our DDD development approach.
 
 The bounded context pattern divides the domain model into related domain fragments. In a service-based environment a bounded context marks the boundaries of an application service.
 An application service is a concretion of the bounded context pattern! This is similar to **Domain Modules** where we mark the boundaries based on features. Applying the bounded
-context pattern to domain modules allows us to structure Angular applications in a domain-driven approach. Possibly the most difficult part is to identify the bounded context and aggregate boundaries.
+context pattern to domain modules allows us to structure Angular applications in a domain-oriented approach. Possibly the most difficult part is to draw the bounded context and aggregate boundaries.
 A bounded context should consist of at least one aggregate and might consist of several aggregates. **A bounded context can be assigned either to an entire page or to page segments.**
 
 Since a bounded context represents one or more aggregates, it's sufficient to couple the bounded context to the root URL (root-resource):
@@ -348,7 +348,7 @@ which has the following advantages:
 - Single storage unit for (immutable) data structures
 
 So far, it may seem like a lot of code for a small payoff. However, as your frontend application grows and becomes large in its lifespan,
-the logical separation approach is adding more and more value to your software project. In most agile processes, like Scrum, where requirements
+the logical separation approach is adding more and more value to your software project. In agile processes like scrum, where requirements
 remain unknown for a long time, it's almost impossible to tell from a few days or even a few weeks of what the next sprints will bring.
 Hence, choosing the right development approach from the beginning is almost impossible. Later, we will discuss the service layer pattern in the form
 of application-, domain- and infrastructure services conform to DDD practices.
@@ -398,8 +398,8 @@ software model making the system easier to reason about. One of the most importa
 - Multiple aggregates can reuse a value object
 - Each aggregate root gets its own repository
 
-The aggregate spans objects relevant to the use case and its business invariants. They are treated as independent entities
-when they don't have related invariants in the domain:
+The aggregate entity spans objects that are relevant to the use case and its domain invariants. They are treated as independent entities
+if they don't share invariants in the domain:
 
 ![](src/assets/images/Aggregate_BR.PNG)
 
@@ -416,23 +416,23 @@ Since the navigation pattern of the Angular router engine adheres to the navigat
 practices, we must reexamine the idea of building client-side aggregates. As an aggregate builds a group of related domain entities and value objects, wouldn't we then have to group
 linked resources?
 
-In the traditional data-centric approach, database tables and their relations are used as the foundation for a resource model. But is this common and always true?
+In the traditional data-centric approach, database tables and their relations are used for the foundation of a resource model. But is this common and always true?
 Well, it all depends on the use case and how we interpret a REST resource! A REST resource might be a representation of a single entity, database table or a materialized view.
 But how do we map a REST URL like `/addresses/22` etc. to a client-side aggregate like `/orders/4` or `/customers/54`?
 
 When consuming a fine-grained REST API, we might have to stitch together linked resources to build an aggregate for each initial routing event. Subsequently, an application or
 repository service provides the public interface to handle all aggregate actions. In this scenario, the repository service acts as an anti-corruption layer to the underlying
-resource model. Unfortunately, this approach might not work, since the creation of an aggregate on the client side could result in countless additional HTTP requests
+resource model. Unfortunately, this approach doesn't play well, since the creation of an aggregate on the client side could result in countless additional HTTP requests
 (N + 1 Problem)! **Hence, the aggregate entity should be negotiated with the Web API as a conceptual whole!** We still can use sub resource URLs like `/order/{id}/items/{id}` in the
 router configuration to enable "In-App-Navigation".
 
-Even in the case of server-provided aggregates, it just doesn't feel right! First, we shouldn't provide a pure domain entity to the client side. Secondly, if
-the server-provided aggregate e.g. order aggregate `GET: /orders/22` already contains related data like the delivery address, then how do we update the delivery address of an order?
-Either we invoke a business action of the order aggregate `Order.updateDeliveryAddress(newAddress)` and subsequently process an HTTP update command: `PUT : /orders/22 : {order:{deliveryAddress...}}`
+Even in the case of server-provided aggregates, it just doesn't feel right! **First, we shouldn't provide a pure domain entity to the client side**. Secondly, if
+the server-provided aggregate e.g. order aggregate `GET: /orders/22` already contains related data like a delivery address, then how do we update the delivery address of that order?
+Either we invoke a business method from the order aggregate `Order.updateDeliveryAddress(newAddress)` and subsequently process an HTTP update command: `PUT : /orders/22 : {order:{deliveryAddress...}}`
 or we use a dedicated REST endpoint for updating the order delivery address: `PUT : orders/22/addresses/5 : {deliveryAddress:{...}}`. Subsequently, the server-side request handler persists the delivery address to the database table.
-The second approach seems to contradict the basic idea of an aggregate to avoid revealing its internal state?
+The second approach seems to contradict the basic idea of an aggregate to avoid revealing its internal state!?
 
-We shouldn't create REST URLs like `/addresses/5`, since the address resource has no context! As an example, calling `DELETE : /addresses/5 : {address:{id:5}}` might delete the address data
+We shouldn't create REST URLs like `/addresses/5`, since the address resource is contextless! As an example, calling `DELETE : /addresses/5 : {address:{id:5}}` might delete the address data
 of an ongoing order process! But now here's a question: can an address exists outside an order or customer context?
 
 Navigating a resource model and its relationships or adhering to use case(s) related aggregates can have a big impact to the frontend architecture!
@@ -499,7 +499,7 @@ newOrderViewModel.balance = -44;
 ```
 
 In the preceding example, data transformation takes place in the same view model class. A better approach would be to use a dedicated component such as a mapper, translator,
-factory or an abstract super class that performs all view-related transformations. In this way, we decouple the transformation responsibilities to promote code reusability by subclassing.
+factory or an abstract super class that performs all view-related transformations. In this way, we decouple the transformation responsibilities to encourage code reusability.
 
 ```
 abstract class ViewModel {
@@ -835,10 +835,10 @@ const orders = [new Order().setAddress({...}).setCustomer({...})];
 
 **» Mapper Checklist:**<br/>
 
-- Bidirectional mapping is inevitable if using model-driven forms
-- The mapper pattern in the repository service assists to build a pure models (bottom up)
-- The mapper pattern in the application service assists to build view models (bottom up)
-- Don't map view models in the repository service because view models may require multiple sources
+- Bidirectional mapping is inevitable when using model-driven forms
+- The mapper pattern in the repository service assists to build pure models 
+- The mapper pattern in the application service assists to build view models 
+- Don't map to view models in the repository service because view models may require multiple sources
 
 **» REST, HATEOAS & Mapping.**<br/>
 
@@ -850,8 +850,8 @@ server response schema to a complex object graph (domain model):
 
 For example, HATEOAS embraces hyperlinks between external resources to make transitions through the applications state by navigating links.
 However, mapping links to a client-side domain model isn't possible! When consuming REST APIs, very often multiple HTTP request need to be performed
-asynchronously to build a model for a specific use case of the presentation layer. If the HATEOAS pattern forms links in the response schema, it constrains the presentation layer
-to incorporate with the REST API in a synchronous way. **UX designers usually don't model their interaction-, navigation- or screen patterns around hypermedia APIs**.
+asynchronously to build a model for a specific use case in the presentation layer. If the applied HATEOAS pattern forms links in the response schema, it 
+may constrain the presentation layer to incorporate with REST APIs in a synchronous way. **UX designers usually don't model their interaction-, navigation- or screen patterns around hypermedia APIs**.
 Furthermore, the Angular router engine doesn't comply with the URI templates of hypermedia formats. HATEOAS might decouple the backend from the frontend,
 but it couples the frontend to the backend. Although the Angular router engine adheres to the navigational behaviour of hypermedia systems, we should avoid
 HATEOAS for web frontend applications!
@@ -1019,7 +1019,7 @@ class ProductsService {
 }
 ```
 
-The single feature service approach makes it difficult to collect data from multiple sources and can lead to circular dependencies when using by other feature services.
+The single feature service approach makes it difficult to collect data from multiple sources and can lead to circular dependencies when used by other feature services.
 
 **» CQRS using Feature Services for Writes and Reads**
 
@@ -1039,11 +1039,8 @@ class CommandHandlers {
 @Injectable()
 class QueryHandlers {
   handleUseCaseQuery1():ViewModel1 {}
-  handleUseCaseQuery2(qm2):ViewModel2 {}
+  handleUseCaseQuery2(qm):ViewModel2 {}
 }
-
-* cm=Command Model
-* qm=Query Model
 ```
 **» CQ(R)S using Application Services**<br/>
 
@@ -1257,13 +1254,6 @@ class CustomerRepository implements Repository<Customer, ID> {
 Build a service or repository anytime a component needs to stash away some property values or for communication with itself or others.
 
 Let's have a look at how to define UI services:
-
-```
-@Injectable()
-export class LoadingService{
-    public showLoadingSpinner = new BehaviorSubject<boolean>(false);
-}
-```
 
 ```
 @Injectable()
