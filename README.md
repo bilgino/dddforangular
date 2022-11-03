@@ -875,6 +875,9 @@ The purpose of the application service is to orchestrate workflows and defining 
 ```
 @Injectable()
 class ApplicationService {
+
+  constructor(private repository: Repository):void{}
+  
   firstUseCase(){}
   secondUseCase(){}
   firstViewModel(){}
@@ -885,6 +888,9 @@ Example:
 
 @Injectable()
 class OrderService {
+
+  constructor(private orderRepository: OrderRepository){} 
+  
   placeOrder(): void{}
   cancelOrder(): void{}
   trackOrder(): void{}
@@ -915,6 +921,9 @@ The purpose of a domain service is to provide a set of business tasks that don't
 ```
 @Injectable()
 class DomainService {
+
+  constructor(private repository: Repository):void{}
+  
   firstBusinessTask(){}
   secondBusinessTask(){}
 }
@@ -923,7 +932,10 @@ Example:
 
 @Injectable()
 class MoneyTransferService {
-  transferMoney(accountRepository: AccountRepository):void{}
+
+  constructor(private accountRepository: AccountRepository):void{}
+  
+  transferMoney():void{}
   calculateTransferCosts():number{}
 }
 ``` 
@@ -1007,11 +1019,9 @@ class ProductsService {
     public createProduct(){}   
     public updateProduct(){}
     public deleteProduct(){}
-    
     public getSelectedProductListView(): Observable<Readonly<ProductListView>[]> {
         return this.selectedProductListView$;
     }
-    
     public addSelectedProduct(id:number): void {
         this.selectedProductIds = [...selectedProductIds, id];
         this.selectedProductIds$.next(this.selectedProductIds);
@@ -1032,26 +1042,38 @@ The single feature service approach makes it difficult to collect data from mult
 ```
 @Injectable()
 class CommandHandlers {
+   
+   constructor(
+      private orderRepository: OrderRepository,             
+      private customerRepository: CustomerRepository,                                        
+      ){}
+      
   handleUseCaseCommand1(cm1) {}
   handleUseCaseCommand2(cm2) {}
 }
 
 @Injectable()
 class QueryHandlers {
+
+ constructor(         
+      private productRepository: ProductRepository,                          
+      private translateService: TranslationService              
+      ){}
+
   handleUseCaseQuery1():ViewModel1 {}
   handleUseCaseQuery2(qm):ViewModel2 {}
 }
 ```
 **» CQ(R)S using Application Services**<br/>
 
-Typically, application services provide query and command methods for retrieving view models out of domain state (CQS). 
+Typically, application services provide query and command methods for retrieving view models out of domain state. 
 
 ![](src/assets/images/QuerySideService.PNG)
 
 This might seem more complex than just using a single feature service for business logic and state management. A fixed layered architecture style would likely 
 be perceived as overkill for small applications and can lead to the layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
 However, in an agile process like scrum where requirements and complexity can't be detected until it's too late, it would be more efficient to take the risk for introducing 
-a possible unnecessary pass-through layer. "You are gonna need it"!
+a possibly unnecessary pass-through layer. "You are gonna need it"!
 
 **» CQRS with Commands and Queries using the Command Pattern**<br/>
 
