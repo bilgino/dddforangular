@@ -98,7 +98,7 @@ because vertical slicing isn't mandatory. The main reasons for modular segmentat
 - Domain layer: Classes, Interfaces, Services, Factories <br/>
 - Infrastructure layer: Interceptors <br/>
 
-Examples:<br/>
+**» Examples**<br/>
 
 Presentation layer: *ModalDialogService, BreakpointObserver, LoadingSpinner, NavController*<br/>
 Application layer: *Authentication, Search*<br/>
@@ -173,8 +173,7 @@ https://angular.io/guide/styleguide#overall-structural-guidelines. This will be 
 
 ![](src/assets/images/scaffolding-ddd.png)
 
-The scaffolding proposed provides inspiration for a discussion of opportunities. Feel free to play around with the folder structure in order to reorganize
-large code base for different purposes.
+The scaffolding proposed provides inspiration for a discussion of opportunities. You may change the folder structure to any form you like.
 
 ## Models
 
@@ -250,10 +249,10 @@ class Employee {
 
 In the second example, domain logic is decoupled from the view controller. Encapsulation protects the integrity of the model data.
 Keeping the model as independent as possible improves reusability and allows easier refactoring.
-Neither domain state nor domain logic should be written as part of the view controller. It's the job of the domain layer!
+Neither domain state nor domain logic should be written as part of the view controller. 
 
 Consequently, using feature services for structural and behavioral modeling while domain models remain pure value containers is another
-common bad practice in Angular projects and known as:
+common bad practice in Angular projects and known as the:
 
 **» Fat Service, Skinny Model Pattern**<br/>
 
@@ -337,7 +336,7 @@ class AccountRepository {
 }
 ```
 
-In the preceding example, we have seperated the account feature service into three layers with different responsibilities,
+In the preceding example, we separated the account feature service into three layers with different responsibilities,
 which has the following advantages:
 
 - Better semantics and human-readable code
@@ -348,7 +347,7 @@ which has the following advantages:
 - Single storage unit for (immutable) data structures
 
 So far, it may seem like a lot of code for a small payoff. However, as your frontend application grows and becomes large in its lifespan,
-the logical separation approach is adding more and more value to your software project. In agile processes like scrum, where requirements
+the logical separation approach is adding more and more value to your software project. In agile processes like scrum where requirements
 remain unknown for a long time, it's almost impossible to tell from a few days or even a few weeks of what the next sprints will bring.
 Hence, choosing the right development approach from the beginning is almost impossible. Later, we will discuss the service layer pattern in the form
 of application-, domain- and infrastructure services conform to DDD practices.
@@ -455,9 +454,9 @@ The aggregate entity should be negotiated with the Web API as a conceptual whole
 
 **» View Model**<br/>
 
-View models are mere data objects and usually don't contain any domain behavior. Thus, they are not a part of the domain layer. View models are supportive in 
-providing data and presentation logic to the view. They are typically created by merging two or more existing models into one model and are an essential part of 
-every good frontend architecture.
+View models are mere data objects and usually don't implement any domain behavior, but they can reuse domain services or specifications to compute values.
+View models are supportive in providing data and presentation logic to the presentation layer. They are typically created by merging two or more 
+existing models into one model and are an essential part of every good frontend architecture.
 
 The view model should hold the data necessary to render the view if:
 
@@ -466,15 +465,15 @@ The view model should hold the data necessary to render the view if:
 
 **» View Model Checklist:**<br/>
 
-- Should have an ID property
+- Must have an ID property
 - Should be immutable and has properties of type `readonly string`
 - Behaves like a value object, also called a data transfer object
-- Might or might not have dependencies
-- Should be located in its own file, repository service or view container component
+- Might or might not have dependencies like domain services
+- Can be located in its own file, repository service or view container component
 - The name ends with the suffix -View e.g. UserProfileView, UserListView, UserDetailsView
-- The name of the view model is equivalent to the name of the view component e.g. UserListComponent -> UserListView
+- The name of the view model is equivalent to the name of the view component class e.g. UserListComponent : UserListView
 
-Example:
+**Example**
 
 ```
 class OrderViewModel {
@@ -541,7 +540,7 @@ Objects can be constructed using regular constructors or using static factories.
 creation of other related objects and more importantly assists in type safety with ES6+ features such as spread, rest, destructuring where type information might get lost.
 Object factories and mappers help us to manage immutability by retrieving new instances when needed, instead of using generic JSON.parse/.stringify or deep-cloning algorithms.
 
-Example 1:
+**Example 1**
 
 ```
 class OrderFactory {
@@ -555,7 +554,7 @@ newOrder.propertyA = ...
 newOrder.propertyB = ...
 ```
 
-Example 2:
+**Example 2**
 
 ```
 interface IOrder{
@@ -595,7 +594,7 @@ const newOrder = Order.create({status:OrderStatus.Pending});
 const jsonOrder = newOrder.toJSON();
 ```
 
-Combining both concepts we get the following result for view models:
+Combining both concepts we get the following result:
 
 ```
 abstract class ViewModel {
@@ -691,7 +690,7 @@ The structural mapper pattern performs a bidirectional transfer of data structur
 class instances used in arrays instead of having seperated JSON object declarations and type annotations. Interfaces help us to assure
 the correct data structure as contracts between the target and the source object.
 
-Option 1 - Constructor Assignment:
+**Option 1** - Constructor Assignment
 
 ```
 interface IOrder {
@@ -715,7 +714,7 @@ class Order {
 const orders = [new Order({id:22,status:Status.Pending,total:450})];
 ```
 
-Option 2 - Constructor Assignment with ES6+:
+**Option 2** - Constructor Assignment with ES6+
 
 ```
 class Order {
@@ -746,7 +745,7 @@ class Order {
 const orders = [new Order({id:22,status:Status.Pending})];
 ```
 
-Option 3 - Constructor Assignment with Index Signature:
+**Option 3** - Constructor Assignment with Index Signature
 
 ```
 class Order {
@@ -782,7 +781,7 @@ const orders = [new Order({id:33,status:Status.PENDING})];
 
 Unfortunately, index signature assignments don't support access modifier (public, private, protected).
 
-Option 4 - Factory Mapper Assignment:
+**Option 4** - Mapper Assignment
 
 ```
 class OrderMapper {
@@ -807,7 +806,7 @@ class OrderMapper {
 const orders = [OrderMapper.mapToOrder(new Order(), {id:33,status:Status.PENDING})];
 ```
 
-Option 5 - Builder Pattern:
+**Option 5** - Builder Pattern
 
 ```
 class Order {
@@ -864,7 +863,7 @@ to Domain-Driven Design practices.
 
 **» Application Service Objects**<br/>
 
-The purpose of the application service is to orchestrate workflows and defining the use cases of the application.
+The purpose of an application service is to orchestrate workflows and defining the use cases of the application.
 
 - Application services don't represent domain concepts, and they don't implement business rules
 - They are stateless and procedural, but sometimes need to hold state of a user journey or business flow
@@ -896,23 +895,24 @@ class OrderService {
   trackOrder(): void{}
   confirmOrder(): void{}
   fullfillOrder(): void{}
+  
   getOrderForSalesView(): OrderForSalesView{}
   getOrderForListView(): OrderForListView{}
   getOrderForDetailsView(): OrderForDetailsView{}
 }
 ``` 
 
-When application services coordinate use cases of the application, it would be better to add use cases with less logic in view controllers, like in the
-MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we can share state and logic with other Angular components 
-such as resolvers, guards and interceptors. The main reason why we add the logic in application services instead of view controllers is that during 
-router navigation our components are destroyed, and so is the application logic. 
+When application services carry out use cases of the application, it might be a better idea to implement use cases that contain less logic directly in view controllers, like in the
+MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular components 
+such as resolvers, guards and interceptors. But the main reason why we put logic in application services instead of view controllers is that during 
+a router navigation event our components will be destroyed. 
 
 **» Domain Service Objects**<br/>
 
 The purpose of a domain service is to provide a set of business tasks that don't fit inside entities or value objects.
 
 - They perform operations and calculations requiring input from multiple domain entities to validate composite business rules 
-- They transform domain object compositions to new domain object representations
+- They may transform domain object compositions to new domain object representations
 - They have no identity, and they are stateless and procedural
 - A domain service can use a domain entity, or a domain entity can use a domain service (Impure Domain Model!)
 - Repositories are domain services, if not applicable to DIP
@@ -940,8 +940,8 @@ class MoneyTransferService {
 }
 ``` 
 
-Sometimes it's difficult to make a clear separation between application services and domain services. An important indication here is that the name of the service
-is not the decisive factor, but rather the task that needs to be performed. When in doubt, we can also waive domain services. 
+Sometimes it's difficult to make a clear separation between application services and domain services. An important indication here is that the 
+name of the service is not the decisive factor, but rather the task that needs to be performed. When in doubt, we can also waive domain services. 
 
 **» Infrastructure Service Objects**<br/>
 
@@ -973,8 +973,8 @@ where we need to stitch together multiple resources to build a rich (view) model
 ![](src/assets/images/Up_Down_Flow.png)
 
 The domain model focuses on business logic rather than presentation needs. Having a view model provider to manage complicated page flows and user
-interfaces allows us to query the appropriate view model for different view patterns. A view model provider is a perfect fit to pre-compute filtering and sorting
-logic (https://angular.io/guide/styleguide#style-04-13). That is, the CQRS pattern helps us to avoid over-bloated all-in-one models.
+interfaces allows us to query the appropriate view model for different view patterns. A view model provider is a perfect fit to pre-compute filtering and 
+sorting logic (https://angular.io/guide/styleguide#style-04-13). That is, the CQRS pattern helps us to avoid over-bloated all-in-one models.
 The CQRS pattern may overcomplicate frontend architectures, instead of simplifying it. Use it with care!
 
 CQRS in the frontend design system has many advantages:
@@ -996,6 +996,7 @@ Using a single feature service (repository service) for writes and reads:
 ```
 @Injectable()
 class ProductsService { 
+
     private selectedProductIds = [1,2,4,9];
     private products = [new Product(1, 'Computer', 1234$'), new Product(2, 'Shoes', 120$')];
     private selectedProductIds$ = new BehaviorSubject<number>(selectedProductIds);
@@ -1019,9 +1020,11 @@ class ProductsService {
     public createProduct(){}   
     public updateProduct(){}
     public deleteProduct(){}
+    
     public getSelectedProductListView(): Observable<Readonly<ProductListView>[]> {
         return this.selectedProductListView$;
     }
+    
     public addSelectedProduct(id:number): void {
         this.selectedProductIds = [...selectedProductIds, id];
         this.selectedProductIds$.next(this.selectedProductIds);
@@ -1043,9 +1046,8 @@ The single feature service approach makes it difficult to collect data from mult
 @Injectable()
 class CommandHandlers {
    
-   constructor(
-      private orderRepository: OrderRepository,             
-      private customerRepository: CustomerRepository,                                        
+  constructor( 
+      private repository: Repository                                                   
       ){}
       
   handleUseCaseCommand1(cm1) {}
@@ -1055,9 +1057,8 @@ class CommandHandlers {
 @Injectable()
 class QueryHandlers {
 
- constructor(         
-      private productRepository: ProductRepository,                          
-      private translateService: TranslationService              
+  constructor(         
+      private repository: Repository             
       ){}
 
   handleUseCaseQuery1():ViewModel1 {}
@@ -1066,7 +1067,7 @@ class QueryHandlers {
 ```
 **» CQ(R)S using Application Services**<br/>
 
-Typically, application services provide query and command methods for retrieving view models out of domain state. 
+Typically, application services provide query and command handlers for retrieving view models out of domain state. 
 
 ![](src/assets/images/QuerySideService.PNG)
 
