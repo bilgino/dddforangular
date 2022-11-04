@@ -911,7 +911,7 @@ The purpose of a domain service is to provide a set of business tasks that don't
 - They perform operations and calculations requiring input from multiple domain entities to validate composite business rules 
 - They may transform domain object compositions to return new object representations
 - They have no identity, and they are stateless and procedural
-- They can be reused in the application
+- They can be reused in other use cases of the application
 - A domain service can use a domain entity, or a domain entity can use a domain service (Impure Domain Model!)
 - Repositories are domain services, if not applicable to DIP
 - Domain services don't just perform RUD operations, which belongs to the repository
@@ -920,7 +920,7 @@ The purpose of a domain service is to provide a set of business tasks that don't
 @Injectable()
 class DomainService {
 
-  constructor():void{}
+  constructor(){}
   
   firstBusinessTask(){}
   secondBusinessTask(){}
@@ -931,7 +931,7 @@ Example:
 @Injectable()
 class MoneyTransferService {
 
-  constructor(private accountRepository: AccountRepository):void{}
+  constructor(private accountRepository: AccountRepository){}
   
   transferMoney():void{}
   calculateTransferCosts():number{}
@@ -972,7 +972,7 @@ where we need to stitch together multiple resources to elaborate a rich (view) m
 ![](src/assets/images/Up_Down_Flow.png)
 
 The domain model focuses on business logic rather than presentation needs. Having a view model provider to manage complicated page flows and user
-interfaces allows us to query view models for different view patterns. A view model provider is the perfect place to pre-compute filtering and 
+interfaces allows us to query data for different view patterns. A view model provider is the perfect place to pre-compute filtering and 
 sorting logic (https://angular.io/guide/styleguide#style-04-13). That is, the CQRS pattern helps us to avoid over-bloated all-in-one models.
 The CQRS pattern may overcomplicate the application design, instead of simplifying it. Use it with care!
 
@@ -1051,8 +1051,8 @@ class CommandHandlers {
       private repository: Repository                                                   
       ){}
       
-  handleUseCaseCommand1(cm1) {}
-  handleUseCaseCommand2(cm2) {}
+  handleUseCaseCommand1(cm1): void {}
+  handleUseCaseCommand2(cm2): void {}
 }
 
 @Injectable()
@@ -1128,7 +1128,7 @@ class Order extends OrderViewModel {
 }
 ``` 
 
-This implementation has some drawbacks either. It only works with a single entity! What if a view model requires multiple sources? 
+This implementation has a drawback either. It only works with a single entity! What if a view model requires multiple sources? 
 We can use a special-purpose class in form of a query handler (view model provider)!
 The purpose of the view model provider is to provide view models for specific view patterns.
 
@@ -1143,7 +1143,7 @@ class OrderQueryHandlers {
       private translateService: TranslationService              
       ){}
 
-    public getOrderForStatusViewByStatus(status:string): Observable<Array<OrderForStatusView>> {
+    public getOrderForStatusViewByStatus(status:string): Observable<OrderForStatusView[]> {
         return this.orderRepository.getAll()
         .pipe(
           filter(status),
@@ -1158,8 +1158,8 @@ class OrderQueryHandlers {
         )
     }
     
-    public getOrderForDetailsViewByProductId(id:number): Observable<Array<OrderForDetailsView>> {
-        return combineLatest(this.productRepository.getAll())
+    public getOrderForDetailsViewByProductId(id:number): Observable<OrderForDetailsView[]> {
+        return this.productRepository.getAll()
         .pipe(
           combineLatestWith(this.orderRepository.getAll());
           map(([d1, d2]),
@@ -1173,7 +1173,7 @@ class OrderQueryHandlers {
 }
 ```
 
-View model objects can also be build in Angular resolver services!
+View model objects can also be elaborated in Angular *resolver* services!
 
 # State Management
 
@@ -1186,8 +1186,8 @@ There are many state types to deal with:
 
 | Type              | Example                  | Location                                | 
 |-------------------|--------------------------|-----------------------------------------|
-| Domain State      | Entity, Resource, Model  | Im-Memory, Browser API                  |
-| View State        | Position, Panel, Zoom    | Im-Memory, Browser API                  |
+| Domain State      | Entity, Resource, Model  | Im-Memory, Browser Storage API          |
+| View State        | Position, Panel, Zoom    | Im-Memory, Browser Storage API          |
 | Router State      | /?sort /?filter /?search | Browser History API                     |
 | Draft State       | Comments, Mails          | In-Memory, Browser Storage API          |
 | Session State     | Tokens, Keys             | In-Memory, Browser Storage API, Cookies |
