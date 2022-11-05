@@ -166,7 +166,7 @@ The interrelationship between Angular, REST and DDD aggregates requires more lab
 A common practice in Angular projects is to structure the code into `/core`, `/shared`, `/features` folders according to **LIFT** and the angular.io styleguide:
 https://angular.io/guide/styleguide#overall-structural-guidelines. This will be the basis for our domain-oriented folder structure:
 
-![](src/assets/images/scaffolding-ddd.png)
+![](src/assets/images/scaffolding.png)
 
 The folder structure proposed provides inspiration for a discussion of opportunities. We may change the folder structure to any form we like.
 
