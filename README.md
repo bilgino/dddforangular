@@ -344,7 +344,7 @@ which has the following advantages:
 So far, it may seem like a lot of code for a small payoff. However, as your frontend application grows and becomes large in its lifespan,
 the logical separation approach is adding more and more value to your software project. In agile processes like scrum where requirements
 remain unknown for a long time, it's hardly possible to tell from a few days or even a few weeks of what the upcoming sprints will bring.
-Hence, choosing the right development approach from the beginning of a project is almost impossible. Later, we'll discuss the service layer pattern 
+Hence, choosing the right development approach from the beginning of a software project is almost impossible. Later, we'll discuss the service layer pattern 
 in form of application-, domain- and infrastructure services conform to DDD practices.
 
 Put simply, working with a rich domain model means more entities than services. Building behavior-rich domain models is a major objective in object-oriented design.
@@ -534,7 +534,7 @@ public getViewModel(): Observable<ViewModel> {
       groupBy(...),
       distinct(...),
       mergeMap((...)=>{
-         return VIEW MODEL HERE!             
+         return RETURN VIEW MODEL HERE!             
       })
     )
 }
@@ -1149,7 +1149,7 @@ class OrderQueryHandlers {
       private translateService: TranslationService              
       ){}
 
-    public getOrderForStatusViewByStatus(status:string): Observable<OrderForStatusView[]> {
+    public getOrderStatusViewByStatus(status:string): Observable<OrderStatusView> {
         return this.orderRepository.getAll()
         .pipe(
           filter(status),
@@ -1159,12 +1159,12 @@ class OrderQueryHandlers {
              return translateService.translate(...);             
           }),
           mergeMap((...)=>{
-             return of([new OrderForStatusView(...)]);             
+             return of(new OrderStatusView(...));             
           })
         )
     }
     
-    public getOrderForDetailsViewByProductId(id:number): Observable<OrderForDetailsView[]> {
+    public getOrderDetailsViewByProductId(id:number): Observable<OrderDetailsView> {
         return this.productRepository.getAll()
         .pipe(
           combineLatestWith(this.orderRepository.getAll());
@@ -1172,7 +1172,7 @@ class OrderQueryHandlers {
           filter(...),
           groupBy(...),
           mergeMap([...]) => {
-            return of([new OrderForDetailsView(...)]);           
+            return of(new OrderDetailsView(...));           
           })
         )        
     }
@@ -1186,7 +1186,7 @@ View model objects can also be created in Angular resolver services!
 With single page applications (SPAs), we get the flexibility and cross-platform functionality of web applications as well as the
 client state management of native applications. Typically, SPAs have more complex state than traditional server-side applications.
 In Angular applications, stateful services are first-class citizens for sharing state across components. The state management
-concept in Angular is managed exclusively by RxJS. RxJS is arguably the most powerful reactive state management library available.
+concept in Angular is exclusively handled through RxJS. RxJS is arguably the most powerful reactive state management library available.
 
 There are many state types to deal with:
 
@@ -1198,7 +1198,7 @@ There are many state types to deal with:
 | Draft State       | Comments, Mails          | In-Memory, Browser Storage API          |
 | Session State     | Tokens, Keys             | In-Memory, Browser Storage API, Cookies |
 | Application State | Online/Offline           | Browser API                             |
-| ERROR State       | throw Error()            | Client / Server                         |
+| ERROR State       | throw new Error()        | Client / Server                         |
 
 ## Domain State
 
