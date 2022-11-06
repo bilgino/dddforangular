@@ -438,7 +438,7 @@ The aggregate entity should be negotiated with the Web API as a conceptual whole
 **» Design Considerations**
 
 Q: How can a GUI designer help to reduce the requests for aggregates?<br>
-A: By defining GUI patterns that don't require compositions and adhere to the navigational behaviour of hypermedia APIs!
+A: By defining GUI patterns that adhere to the navigational behaviour of hypermedia APIs!
 
 **» View Model**<br/>
 
@@ -454,7 +454,7 @@ The view model should hold the data necessary to render the view if:
 **» View Model Checklist**<br/>
 
 - Is located in the domain layer 
-- Is able to use domain entities, -services, specifications to compute values
+- Can use domain entities, domain services, specifications to compute values
 - Contains public properties of type `readonly string` 
 - Behaves like a value object, also called a data transfer object and is immutable
 - Can be assembled in an application service, view controller, factory or mapper 
@@ -527,8 +527,8 @@ in a reactive stream and hand over the result to an object factory.
 **» (Domain) Object Factory Pattern**<br/>
 
 Objects can be constructed using regular constructors or using static factories. The object factory pattern helps to create complex objects like aggregates that involve the
-creation of other related objects and more importantly assists in type safety when type information might get lost due to ES6+ features such as *spread*, *rest*, *destructuring*.
-Object factories and mappers assists us to manage immutable state by providing new objects when needed.
+creation of other related objects and more importantly assist in type safety when type information might get lost due to ES6+ features such as *spread*, *rest*, *destructuring*.
+Object factories and mappers assist us to manage immutable state by providing new objects when needed.
 
 Example 1
 
@@ -672,14 +672,14 @@ read(): Observable<Customer[]> {
 };
 ```
 
-The Data Mapper can be used anywhere in the application to create the required model schema.
+The data mapper can be used anywhere in the application to create the required model schema.
 
 **» Structural Mapper Pattern**<br/>
 
-The structural Mapper Pattern performs a bidirectional transfer of data structures between two objects. 
+The structural mapper pattern performs a bidirectional transfer of data structures between two objects. 
 
-When populating arrays, the Mapper Pattern assures type safety through class instances instead of JSON object literals. 
-Interfaces will be used as contracts between the target and the source object. 
+When populating arrays, the mapper pattern ensures type safety using class instances instead of JSON object literals. 
+Interfaces will only be used as contracts between target and the source objects. 
 
 Option 1 - Constructor Assignment
 
@@ -893,7 +893,7 @@ class OrderService {
 
 When application services carry out use cases of the application, it might be a good idea to implement use cases that contain less logic directly in the view controller, 
 like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular 
-components such as *resolvers*, *guards* or *interceptors*. The main reason why we favor application services over view controllers is because during 
+components such as resolvers, guards or interceptors. The main reason why we favor application services over view controllers is because during 
 router navigation our components will be destroyed. 
 
 **» Domain Service Objects**<br/>
@@ -968,7 +968,7 @@ interfaces allows us to query data for different view patterns. A view model pro
 sorting logic (https://angular.io/guide/styleguide#style-04-13). That is, the CQRS pattern helps us to avoid over-bloated all-in-one models.
 The CQRS pattern may overcomplicate the application design, instead of simplifying it. Use it with care!
 
-CQRS in the frontend design system has many advantages:
+CQRS in the frontend has many advantages:
 
 - Separating concerns of each data model
 - Unidirectional data flow
@@ -976,7 +976,7 @@ CQRS in the frontend design system has many advantages:
 - Immutable view models comply with the `.onPush` strategy
 - sort() and filter() pipes can be detached from templates (https://angular.io/guide/styleguide#do-not-add-filtering-and-sorting-logic-to-pipes)
 
-The view model provider may appear in different forms. The provider may appear in form of a query method of an application service, a resolver or a query object:
+The view model provider may appear in different forms. It may appear in form of a query method, resolver or a query object:
 
 **» CQS using Feature Services**
 
@@ -1031,7 +1031,7 @@ The single feature service approach makes it difficult to gather data from multi
 
 ![](src/assets/images/Service_CQRS.png)
 
-**» CQRS using Command and Query Handlers and DDD Patterns**<br/>
+**» CQRS using Command and Query Handlers and DDD Tactical Patterns**<br/>
 
 ![](src/assets/images/Service_CQRS_CQ.png)
 
@@ -1060,7 +1060,7 @@ class QueryHandlers {
 ```
 **» CQ(R)S using Application Services**<br/>
 
-Typically, an application service provides query handlers to create view models out of domain state. 
+Typically, an application service provides query handlers to provide view models out of domain state. 
 
 ![](src/assets/images/QuerySideService.PNG)
 
@@ -1077,8 +1077,8 @@ However, in agile processes like scrum where requirements can't be foreseen, it 
 
 **» View Model Provider Patterns**<br/>
 
-There's another problem when it comes to creating view models out of domain state. We may need to expose private domain object properties.
-With the *projection by entity* pattern we can define a special contract for view model mappings:
+There's another problem when it comes to the view model creation. We may need to expose private domain properties to the mapping operation.
+With the *projection by entity* pattern we define a special contract for view model mappings:
 
 ![](src/assets/images/VMPRO.png)
 
@@ -1122,9 +1122,7 @@ class Order extends OrderViewModel {
 }
 ``` 
 
-This implementation has a drawback either. It only works with a single entity! What if a view model requires multiple sources? 
-We can use a dedicated object in form of a query handler (view model provider)!
-The purpose of the view model provider is to provide view models for individual view patterns.
+If a view model requires multiple sources, we can build a dedicated class in form of a query handler service to provide view models for individual view patterns.
 
 ```
 @Injectable()
@@ -1167,7 +1165,7 @@ class OrderQueryHandlers {
 }
 ```
 
-View model objects can also be created in Angular *resolver* services!
+View model objects can also be created in Angular resolver services!
 
 # State Management
 
@@ -1281,7 +1279,7 @@ export class BreakpointObserver {
 }
 ```
 
-Sometimes it's difficult to define the boundaries between UI services and application services. For example, is a BreakpointObserver more of a UI service or
+Sometimes it's difficult to draw the boundaries between UI services and application services. For example, is a BreakpointObserver more of a UI service or
 an application service? Typically, application services are stateless and orchestrate use cases of the application!
 
 ## Router State
@@ -1330,7 +1328,7 @@ us to load multiple components simultaneously, but brings limitations.
 Pathless or component-less routes are a good way to share data between sibling components. This kind of routes provide a way
 to load multiple components at a time. However, deep-linking isn't supported as known. Workarounds can help to allow
 deep-linking to some extent. By checking route params in named router outlets or by intervening with
-Resolvers or Route Guards. If specific properties evaluate to true, we'll display the component:
+resolvers or guards. If specific properties evaluate to true, we'll display the component:
 
 `<router-outlet *ngIf="id==='22'" name='employee'></router-outlet>`
 
