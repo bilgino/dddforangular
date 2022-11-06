@@ -526,6 +526,20 @@ Due to performance implications, it is not recommendable to bind `getters` in th
 Hardcoding transformation methods in the view model class causes tight coupling. A better approach is to process data transformations such as *filtering*, *sorting*, *grouping* or *destructuring* etc.
 in a reactive stream and hand over the required properties to an object factory.
 
+```
+public getViewModel(): Observable<ViewModel> {
+    return this.repository.getAll()
+    .pipe(
+      filter(...),
+      groupBy(...),
+      distinct(...),
+      mergeMap((...)=>{
+         return VIEW MODEL HERE!             
+      })
+    )
+}
+```
+
 **» (Domain) Object Factory Pattern**<br/>
 
 Objects can be constructed using regular constructors or using static factories. The object factory pattern helps to create complex objects like aggregates that involve the
