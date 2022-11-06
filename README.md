@@ -826,8 +826,8 @@ const orders = [new Order().setAddress({...}).setCustomer({...})];
 **» Mapper Checklist**<br/>
 
 - Bidirectional mapping is important when using model-driven forms
-- The mapper pattern in the repository service assists to elaborate pure models 
-- The mapper pattern in the application service assists to elaborate view models
+- The mapper pattern in the repository service assists to create pure models 
+- The mapper pattern in the application service assists to create view models
 - Don't create view models in the repository service because it may require multiple sources
 
 **» REST, HATEOAS & Mapping**<br/>
@@ -858,7 +858,7 @@ The purpose of an application service is to orchestrate workflows and defining t
 - They don't represent domain concepts, and they don't implement business rules
 - They are stateless and procedural, but sometimes need to hold state of a user journey or business flow
 - They may use a domain service to perform a domain-specific task
-- They are also the place to elaborate view models out of domain state
+- They are also the place to create view models out of domain state
 - Application service methods are also called command handlers
 
 ```
@@ -945,7 +945,7 @@ We typically use stateful services, if we need to share data across components o
 
 Adhering to DDD concepts, we'll use the repository pattern in favor of an active data store. The repository pattern acts as a reactive storage unit
 for globally accessible data that can be used by other independent components. Repositories aren't only for entities, but for all objects
-including view models. Repositories often act as an anti-corruption layer enabling us to elaborate data models without their structure
+including view models. Repositories often act as an anti-corruption layer enabling us to create data models without their structure
 being influenced by the underlying Web-API.
 
 In addition, we'll also use the CQRS pattern to stem the heavy-lift when building complicated page flows and user interfaces.
@@ -1065,9 +1065,10 @@ Typically, an application service provides query handlers to create view models 
 ![](src/assets/images/QuerySideService.PNG)
 
 This might seem more complex than just using a single feature service for business logic and state management. A fixed layered architecture style would likely 
-be perceived as overkill for small applications and can lead to the layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
-However, in agile processes like scrum where requirements and complexity can't be foreseen due to the lack of comprehensive requirements, it would be more 
-efficient to take the risk and add a possibly unnecessary pass-through layer. "You are gonna need it"!
+be perceived as overkill for small applications and can lead us to a layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
+However, in agile processes like scrum where requirements can't be foreseen, it would be more efficient to take the risk and add a possibly unnecessary pass-through layer. 
+
+"You are gonna need it"!
 
 **» CQRS using the Command Pattern**<br/>
 
@@ -1076,12 +1077,12 @@ efficient to take the risk and add a possibly unnecessary pass-through layer. "Y
 
 **» View Model Provider Patterns**<br/>
 
-Another problem when assembling view models out of domain state is that we may need to expose private properties of domain entities.
-With the *projection by entity* pattern we can define a special contract for the view model mappings:
+There's another problem when it comes to creating view models out of domain state. We may need to expose private domain object properties.
+With the *projection by entity* pattern we can define a special contract for view model mappings:
 
 ![](src/assets/images/VMPRO.png)
 
-Let's have a look at how to keep models in sync using factory methods:
+Factory methods define the contract for view model mappings:
 
 ```
 class Order {
@@ -1098,7 +1099,7 @@ class Order {
 }
 ```
 
-Elaborating view models directly in domain entities violates the single responsibility rule!
+Creating view models directly in domain entities violates the single responsibility rule!
 We can remove the factory methods using an abstract class:
 
 ```
@@ -1122,8 +1123,8 @@ class Order extends OrderViewModel {
 ``` 
 
 This implementation has a drawback either. It only works with a single entity! What if a view model requires multiple sources? 
-We can use a special-purpose class in form of a query handler (view model provider)!
-The purpose of the view model provider is to provide view models for specific view patterns.
+We can use a dedicated object in form of a query handler (view model provider)!
+The purpose of the view model provider is to provide view models for individual view patterns.
 
 ```
 @Injectable()
@@ -1166,7 +1167,7 @@ class OrderQueryHandlers {
 }
 ```
 
-View model objects can also be elaborated in Angular *resolver* services!
+View model objects can also be created in Angular *resolver* services!
 
 # State Management
 
