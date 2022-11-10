@@ -404,7 +404,7 @@ if they don't share invariants in the domain:
 - Aggregates don't publish domain events and won't be out‐of‐sync due to async observables
 - Inter-Aggregate references established by ID instead of object references are optional
 - Since the web browser is a monolithic environment with a homogenous stack, entities can be referenced anywhere in the application
-- If the backend isn't aware of CQRS, frontend aggregates set the basis for building view models
+- If the backend isn't aware of CQRS, frontend aggregates build the basis for tailoring view models
 
 **» Routing, REST and DDD Aggregates**<br/>
 
@@ -1282,13 +1282,14 @@ class CustomerRepository implements Repository<Customer, ID> {
 }
 ```
 
-**» Shared Repository Pattern**<br/>
+**» Repository Checklist**<br/>
 
 - Represents a reactive in-memory collection of objects
 - Implements the HTTP API to communicate to the server
-- Provides the contract to read and write a collection of objects
-- Should not provide a contract for the presentation layer
+- Provides the contract to read and write objects
+- Doesn't provide the contract for view models
 - Never contains a collection of value objects
+- Is the place to tailor pure models
 
 ## UI State
 
