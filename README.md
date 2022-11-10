@@ -72,7 +72,7 @@ if the domain is simple and only contains a few objects. The main reasons for mo
 
 - Presentation Layer: GUI Components, Widgets, UI Services
 - Application Layer: Command & Query Handlers (Use Case Services) <br/>
-- Domain Layer: Entities, Value Objects, Factories, Domain Services, Repositories <br/>
+- Domain Layer: Entities (Write & Read), Value Objects, Factories, Domain Services, Repositories <br/>
 - Infrastructure Layer: 3rd-Party Libraries <br/>
 
 **» Service Layers**<br/>
@@ -191,8 +191,8 @@ The view model and domain model should maintain different data structures to kee
 
 The anemic domain model is often used in CRUD-based web applications as value container without any behavior of its own (Active Record Pattern). However, it's considered an anti-pattern
 because it doesn't contain business logic and can't protect its invariants. Furthermore, it causes tight coupling with the client. Working with behaviour-rich domain models prevents
-domain logic from leaking into other layers or surrounding services. However, if your frontend application doesn't contain any business logic, it's totally fine to use anemic models!
-The following example shows the negative side effect of using anemic domain models.
+domain logic from leaking into other layers or surrounding services. However, if your frontend application doesn't contain any domain logic, it's totally fine to use anemic models! Start your frontend project
+with naked objects! The following example demonstrates the negative side effect of using anemic domain models.
 
 Domain logic is coupled to the client (view controller):
 
@@ -246,7 +246,7 @@ class Employee {
 In the second example, domain logic is decoupled from the view controller. Encapsulation protects the integrity of the model data.
 Pushing logic out of view controllers down to the model layer improves reusability and allows easier refactoring.
 
-Consequently, using feature services for structural and behavioral modeling while domain models remain pure value containers is another
+Consequently, using feature services (Transaction Script Pattern) for structural and behavioral modeling while domain models remain pure value containers is another
 common bad practice in Angular projects and known as the:
 
 **» Fat Service, Skinny Model Pattern**<br/>
@@ -331,7 +331,7 @@ class AccountRepository {
 }
 ```
 
-In the preceding example, we separated the account feature service into three layers with different responsibilities,
+In the preceding example, we separated the account feature service (Transaction Script Pattern) into three layers with different responsibilities,
 which has the following advantages:
 
 - Better semantics and human-readable code
@@ -381,17 +381,18 @@ One of the most important aspects of the aggregate pattern is to protect it from
 - It's a top-level core business object
 - It's bounded from the viewpoint of a business use cases
 - It's based on a root entity and typically acts as a cluster of related domain entities and value objects
-- It has global identity (ID), state, lifecycle and receives the name of the bounded context
+- It has global identity (ID), state, lifecycle
 - It's modeled around protecting business invariants, encapsulation and data integrity
 - It validates all incoming actions and ensures that modifications don't contradict business invariants
-- Business invariants must be satisfied for each state change, when one part is updated, so are other parts
-- The internal state can only be mutated by the aggregate's contract
-- It doesn't pass any reference of inside objects to the outside world
+- Business invariants must be satisfied for each state change, when one part is updated, so will other parts
+- The internal state can only be mutated by the contract of the aggregate
+- It never passes any reference of inside objects to the outside world
 - Objects from outside can't make changes to inside objects, they can only change the root object
 - Objects from inside can have (ID-) references to outside objects
 - Each use case should have only one aggregate but can use other aggregates to retrieve information
 - Multiple aggregates can reuse a value object
-- Each aggregate root gets its own repository
+- Each aggregate root gets its own repository service
+- It should never inject dependencies in the constructor or pass them into a method
 
 The aggregate entity spans objects that are relevant to the use case and its invariants. They are treated as independent entities
 if they don't share invariants in the domain:
@@ -412,7 +413,7 @@ practices, we must reexamine the idea of creating client-side aggregates. As an 
 linked resources?
 
 In the traditional data-centric approach, database tables and their relationships are pictured on a resource model (Active Record Pattern). But is this common and always true?
-Well, it all depends on the use case and how we interpret a REST resource! A REST resource could be a representation of a single entity, database table or a materialized view.
+Well, it all depends on the use case and how we interpret a REST resource! A REST resource could be a representation of a single object, database table or a materialized view.
 But how do we map a REST URL like `/addresses/22` to a client-side aggregate like `/orders/4` or `/customers/54`?
 
 When consuming fine-grained REST interfaces, we might have to piece together linked resources to create an aggregate for each initial routing event. Subsequently, an application or
@@ -506,10 +507,10 @@ class OrderViewModel extends ViewModel {
     private _total: string;
     private _balance: string;
      
-    get total(){}
-    set total(data){ this._total = this.format(data) }
-    get balance(){}
-    set balance(data){ this._balance = this.calc(data) }
+    get total(){ return this._total; }
+    set total(data){ this._total = this.format(data); }
+    get balance(){ return this.balance; }
+    set balance(data){ this._balance = this.calc(data); }
     
     constructor(){
       this.super();
@@ -831,7 +832,7 @@ class Order {
     
     public setCustomer(newCustomer: Customer): this {
         this.customer = new Customer(newCustomer);
-        return this.;
+        return this;
     }
 }
 
@@ -921,7 +922,7 @@ The purpose of a domain service is to provide a set of business tasks that don't
 - They can be reused in other use cases of the application
 - A domain service can use a domain entity, or a domain entity can use a domain service (Impure Domain Model!)
 - Repositories are domain services, if not applicable to the *dependency rule*
-- Domain services don't just perform CRUD operations, which belongs to the repository service
+- Domain services don't just perform *RUD operations, which belongs to the repository service
 
 ```
 @Injectable()
@@ -994,7 +995,7 @@ The view model provider may appear in different forms. It may appear in form of 
 
 **» CQS using Feature Services**
 
-Using a single feature service (repository) for writes and reads:
+Using a single feature service (Repository) for writes and reads:
 
 ![](src/assets/images/SingleService_CQRS.png)
 
@@ -1091,8 +1092,8 @@ However, in agile processes like scrum where requirements can't be foreseen, it 
 
 **» View Model Provider Patterns**<br/>
 
-There's another problem when it comes to the creation of view models. We may need to expose internal state and private properties to the mapping operation!
-With the *projection by entity* pattern we define a special contract for view model mappings:
+There's another problem when it comes to creating view models. We may need to expose internal state and private properties of domain entities 
+in order to map to view models! With the *projection by entity* pattern we define a special contract for mappings:
 
 ![](src/assets/images/VMPRO.png)
 
@@ -1179,7 +1180,7 @@ class OrderQueryHandlers {
 }
 ```
 
-View model objects can also be created in Angular resolver services!
+The view model provider can also be reused in an Angular resolver service!
 
 # State Management
 
@@ -1256,6 +1257,7 @@ export class CustomerRepository {
     public contains(...): Observable<boolean>;
     public findById(...): Observable<Customer>{};
     public findBySalaryType(...): Observable<Customer>{};
+    public findByCategory(...): Observable<Customer>{};
     public groupBy(...): Observable<Customer>{};
     public save(...): Observable<void>{};
     public update(...): Observable<void>{};
@@ -1279,6 +1281,14 @@ class CustomerRepository implements Repository<Customer, ID> {
     constructor(private customers: Customer[]){}
 }
 ```
+
+**» Shared Repository Pattern**<br/>
+
+- Represents a reactive in-memory collection of objects
+- Implements the HTTP API to communicate to the server
+- Provides the contract to read and write a collection of objects
+- Should not provide a contract for the presentation layer
+- Never contains a collection of value objects
 
 ## UI State
 
