@@ -655,10 +655,10 @@ cosnt productViewModel = ProductViewModel.create({
 });
 ```
 
-**» Mapper Pattern**<br/>
+**» Data Mapper Pattern**<br/>
 
 With a higher-functional model layer, we need to take the mapper pattern into consideration. A common practice to ensure type safety is to create interfaces 
-for plain JSON object literals. In the context of mapping, it's important to make a clear distinction between the typing system and the data structure of objects.
+for plain JSON object literals. In the context of mapping, it's important to make a distinction between the typing system (1:1 mapping) and the object structure (n:m mapping).
 
 Mapping JSON-encoded server data in the frontend is mandatory if:
 
@@ -1286,9 +1286,10 @@ class CustomerRepository implements Repository<Customer, ID> {
 
 - Represents a reactive in-memory collection of objects
 - Implements the HTTP API to communicate to the server
-- Provides the contract to read and write objects
-- Doesn't provide the contract for view models
-- Never contains a collection of value objects
+- Implements the contract for reads and writes
+- Contract doesn't include creation of objects
+- Shouldn't provide data for presentation needs
+- Shouldn't contain a collection of value objects
 - Is the place to tailor pure models
 
 ## UI State
