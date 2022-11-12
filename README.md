@@ -1,4 +1,4 @@
-# Introduction <span style="color:red">(WIP) </span>
+# Introduction <span style="color:red">(Work In Progress) </span>
 A brief and practical introduction into building large-scale enterprise business applications with Angular.
 
 # Application Architecture
@@ -460,7 +460,7 @@ The view model should hold the data necessary to render the view if:
 - Can use domain entities, domain services, specifications to compute values
 - Contains public properties of type `readonly string` 
 - Behaves like a value object, also called a data transfer object and is immutable
-- Can be assembled in an application service, view controller, factory or mapper 
+- Can be tailored in an application service, view controller, factory or mapper 
 - Can be placed in a separate file
 - The name ends with the suffix -View or -ViewModel e.g. UserProfileView, UserListView, UserDetailsView
 - The name of the view model is equivalent to the name of the view component
@@ -489,8 +489,8 @@ newOrderViewModel.total = 444;
 newOrderViewModel.balance = -44;
 ```
 
-In the preceding example, data transformation takes place in the same view model class. A better approach would be to use a dedicated component such as a 
-factory or an abstract super class that processes all view-related transformations. In this way, we decouple the transformation responsibilities to encourage code 
+In the preceding example, data transformation and validation takes place in the same view model class. A better approach would be to use a dedicated component such as a 
+factory, validation service or an abstract super class that processes all view-related transformations and validations. In this way, we decouple the transformation responsibilities to facilitate code 
 reusability.
 
 ```
@@ -535,17 +535,17 @@ public getViewModel(): Observable<ViewModel> {
       groupBy(...),
       distinct(...),
       mergeMap((...)=>{
-         return RETURN VIEW MODEL HERE!             
+         return of(new ViewModel(...))             
       })
     )
 }
 ```
 
-**» (Domain) Object Factory Pattern**<br/>
+**» Factory Pattern**<br/>
 
-Objects can be constructed using regular constructors or using static factories. The object factory pattern helps to create complex objects like aggregates that involve the
-creation of other related objects and more importantly assist in type safety when type information might get lost due to ES6+ features such as *spread*, *rest* or *destructuring*.
-Object factories and mappers assist us to manage immutable state by providing new objects when needed.
+Objects can be constructed using regular constructors or factories. The object factory pattern helps to create complex objects like aggregates that involve the
+creation of other related objects and more importantly assist in type safety when type information get lost resulting from ES6+ features such as *spread*, *rest* or *destructuring*.
+Object factories assist with immutability by providing new objects when needed. Furthermore, we can put constrains in factories to avoid unnecessary object instantiation in the entire project.
 
 Example 1
 
@@ -554,6 +554,8 @@ class OrderFactory {
     public static create() {
       return new Order();
     }
+    public static clone(order: Order) {}
+    public static deepClone(order: Order) {}
 }
 
 const newOrder = OrderFactory.create();
@@ -601,7 +603,7 @@ const newOrder = Order.create({status:OrderStatus.Pending});
 const jsonOrder = newOrder.toJSON();
 ```
 
-Combining both concepts we get this solution:
+Combining both concepts:
 
 ```
 abstract class ViewModel {
@@ -609,7 +611,7 @@ abstract class ViewModel {
     constructor(){}
     
     protected transformPrice(price: string): string {
-      return ... // Do something with price value
+      return `${price}€`
     }
 }
  
@@ -622,11 +624,10 @@ interface IProductViewModel {
 };
 
 class ProductViewModel extends ViewModel {
-    private id!: number;
-    private name!: string;
-    private price!: string;
-    private type!: string;
-    private active!: boolean;
+    public id!: number;
+    public name!: string;
+    public price!: string;
+    public type!: string;
 
     private constructor(props: IProductViewModel) {
       super();
@@ -635,7 +636,7 @@ class ProductViewModel extends ViewModel {
     }
     
     private static canNotCreate(props: IProductView): boolean {
-      // validate props and return error
+      // validate props and return result
     }
     
     public static create(props: IProductViewModel): Readonly<ProductViewModel> {
@@ -649,11 +650,18 @@ class ProductViewModel extends ViewModel {
 cosnt productViewModel = ProductViewModel.create({
     id: 1,
     name: 'screw',
-    price: '28$',
-    type: 'pans',
-    active: false
+    price: '28',
+    type: 'pans'
 });
 ```
+
+**» Factory Checklist**<br/>
+
+- Are divided into several subtypes: abstract factory and factory method
+- Help to validate constraints before expensive and unnecessary object creations occur
+- Encapsulate complex object creations for better reusability and testability
+- Forces the team to clone objects in a predetermined way
+- Have obviously less syntax and are simpler to read
 
 **» Data Mapper Pattern**<br/>
 
