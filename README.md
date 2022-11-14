@@ -103,9 +103,9 @@ Domain layer: *Order, Payment, Customer, Shipment, Product, Address, Inventory*<
 Infrastructure layer: *Persistence, Caching, Messaging, Crypto, Converter, Translation,*
 *Logging, Error, Security, Configuration, Tokens, Monitoring, Date, RuleEngine*
 
-# Angular Core Concepts
+# Angular Core Patterns
 
-Core patterns such as modules, services, components, factories etc. complies with Domain-Driven Design concepts and
+The core patterns of Angular such as modules, services, components, factories etc. already complies with Domain-Driven Design concepts and
 strives two of the most important software design principles, which are single responsibility (SRP) and separation of concerns (SoC).
 
 ## Modules
@@ -143,7 +143,7 @@ Following checklist helps to facilitate the orchestration of ngModules:<br/>
 - Transitive dependencies aren't visible, **reexport** them to make them available to other modules
 
 As the number of module types can become overwhelming and difficult to apply correctly, it can lead developers to make incorrect decisions.
-Every module type serves a different purpose! In the context of domain architecture and domain partitioning, domain modules serve as the basis for our DDD development approach.
+Every module type serves a different purpose! In the context of domain architecture and domain partitioning, domain modules serve as the basis for our domain-oriented development approach.
 
 **» Bounded Context Pattern**<br/>
 
@@ -159,7 +159,7 @@ The development team should strive to draw a context map expressing the relation
 
 ![](src/assets/images/BoundedContext.png)
 
-An important consideration when modeling server-side bounded contexts is that they don't fully adhere to RESTful practices.
+An important aspect when modeling server-side bounded contexts is that they don't fully adhere to RESTful practices.
 The interrelationship between Angular, REST and DDD aggregates requires more labor which we'll discuss shortly.
 
 **» Folder Structure**<br/>
@@ -401,10 +401,11 @@ if they don't share invariants in the domain:
 
 **» From the Viewpoint of Frontend Development**
 
-- Aggregates don't publish domain events and won't be out‐of‐sync due to async observables
+- Aggregates don't publish domain events and won't get out‐of‐sync due to async observables
 - Inter-Aggregate references established by ID instead of object references are optional
 - Since the web browser is a monolithic environment with a homogenous stack, entities can be referenced anywhere in the application
-- If the backend isn't aware of CQRS or BFF, frontend aggregates build the basis for tailoring view models
+- If the backend isn't aware of CQRS or BFF, frontend aggregates serve as the basis for tailoring view models
+- Transactional consistency boundaries aren't relevant 
 
 **» Routing, REST and DDD Aggregates**<br/>
 
@@ -655,8 +656,8 @@ cosnt productViewModel = ProductViewModel.create({
 
 **» Factory Checklist**<br/>
 
-- Helps to validate constraints before expensive object creations occur
-- Encapsulates complicated object creations toward better testability and readability
+- Validates constraints before expensive objects are instantiated
+- Encapsulates complex object creations toward better testability and readability
 - Forces the development team to clone objects in a predetermined way
 
 **» Data Mapper Pattern**<br/>
