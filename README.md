@@ -246,7 +246,7 @@ class Employee {
 In the second example, domain logic is decoupled from the view controller. Encapsulation protects the integrity of the model data.
 Pushing logic out of view controllers down to the model layer improves reusability and allows easier refactoring.
 
-Consequently, using feature services (Transaction Script Pattern) for structural and behavioral modeling while domain models remain pure value containers is another
+Consequently, using feature services (Transaction Script Implementation) for structural and behavioral modeling while domain models remain pure value containers is another
 common bad practice in Angular projects and known as the:
 
 **» Fat Service, Skinny Model Pattern**<br/>
@@ -331,7 +331,7 @@ class AccountRepository {
 }
 ```
 
-In the preceding example, we separated the account feature service (Transaction Script Pattern) into three layers with different responsibilities,
+In the preceding example, we separated the account feature service (Transaction Script Implementation) into three layers with different responsibilities,
 which has the following advantages:
 
 - Better semantics and human-readable code
@@ -373,26 +373,26 @@ class Order {
 ```
 
 In classic object-oriented design (real-world design) the software model lacked of explicit boundaries. Relationships between classes brought a complexity that required an efficient design.
-The DDD aggregate pattern takes a contextual approach by embracing groupings of entities and value objects that are modeled around business rules and transactional boundaries making the system easier to reason about. 
-One of the most important aspects of the aggregate pattern is to protect it from being invalid and having an inconsistent state.
+The DDD aggregate pattern takes a contextual approach by embracing groupings of entities and value objects that are modeled around business rules and consistency boundaries making the system easier to reason about. 
+One of the most important aspects of the aggregate pattern is to protect it from having an inconsistent state.
 
 **» Aggregate Entity Checklist**
 
-- It's a top-level core business object
-- It's bounded from the viewpoint of a business use cases
+- It's a top-level core business object (domain concept)
+- It's bounded from the viewpoint of a use case
 - It's based on a root entity and typically acts as a cluster of related domain entities and value objects
-- It has global identity (ID), state, lifecycle
-- It's modeled around protecting business invariants, encapsulation and data integrity
-- It validates all incoming actions and ensures that modifications don't contradict business invariants
-- Business invariants must be satisfied for each state change, when one part is updated, so will other parts
+- It has global identity (ID), state, lifecycle and serves as a consistency boundary
+- It validates all incoming actions and ensures that modifications don't contradict invariants
+- Invariants must be satisfied for each state change, when one part is updated, other parts might too 
 - The internal state can only be mutated by the contract of the aggregate
 - It never passes any reference of inside objects to the outside world
 - Objects from outside can't make changes to inside objects, they can only change the root object
-- Objects from inside can have (ID-) references to outside objects
+- Objects from inside can have references to outside objects
 - Each use case should have only one aggregate but can use other aggregates to retrieve information
 - Multiple aggregates can reuse a value object
 - Each aggregate root gets its own repository service
 - It should never inject dependencies in the constructor or pass them into a method
+- Inter-aggregate invariants on bounded context level should be contained by domain or application services
 
 The aggregate entity spans objects that are relevant to the use case and its invariants. They are treated as independent entities
 if they don't share invariants in the domain:
@@ -404,7 +404,7 @@ if they don't share invariants in the domain:
 - Aggregates don't publish domain events and won't be out‐of‐sync due to async observables
 - Inter-Aggregate references established by ID instead of object references are optional
 - Since the web browser is a monolithic environment with a homogenous stack, entities can be referenced anywhere in the application
-- If the backend isn't aware of CQRS, frontend aggregates build the basis for tailoring view models
+- If the backend isn't aware of CQRS or BFF, frontend aggregates build the basis for tailoring view models
 
 **» Routing, REST and DDD Aggregates**<br/>
 
@@ -458,12 +458,9 @@ The view model should hold the data necessary to render the view if:
 
 - Is located in the domain layer 
 - Can use domain entities, domain services, specifications to compute values
-- Contains public properties of type `readonly string` 
-- Behaves like a value object, also called a data transfer object and is immutable
-- Can be tailored in an application service, view controller, factory or mapper 
-- Can be placed in a separate file
+- Behaves like a value object, also called a DTO and is immutable
+- Can be tailored in an application service, view controller, factory or data mapper 
 - The name ends with the suffix -View or -ViewModel e.g. UserProfileView, UserListView, UserDetailsView
-- The name of the view model is equivalent to the name of the view component
 
 **» Example**
 
@@ -490,7 +487,7 @@ newOrderViewModel.balance = -44;
 ```
 
 In the preceding example, data transformation and validation takes place in the same view model class. A better approach would be to use a dedicated component such as a 
-factory, validation service or an abstract super class that processes all view-related transformations and validations. In this way, we decouple the transformation responsibilities to facilitate code 
+factory, validation service or an abstract super class that processes view-related transformation and validation. In this way, we decouple the transformation responsibilities to facilitate code 
 reusability.
 
 ```
@@ -522,7 +519,7 @@ newOrderViewModel.total = 444;
 newOrderViewModel.balance = -44;
 ```
 
-Due to performance implications, it is not recommendable to bind `getters` in the view template. Instead, we favor public properties as primitive types.
+Due to performance implications, it is not recommendable to bind `getters` in the view template. Instead, we favor public properties.
 
 Hardcoding transformation methods in the view model class causes tight coupling. A better approach is to process data transformations such as *filtering*, *sorting*, *grouping* or *destructuring* etc.
 in a reactive stream and hand over the required properties to an object factory.
@@ -545,7 +542,7 @@ public getViewModel(): Observable<ViewModel> {
 
 Objects can be constructed using regular constructors or factories. The object factory pattern helps to create complex objects like aggregates that involve the
 creation of other related objects and more importantly assist in type safety when type information get lost resulting from ES6+ features such as *spread*, *rest* or *destructuring*.
-Object factories assist with immutability by providing new objects when needed. Furthermore, we can put constrains in factories to avoid unnecessary object instantiation in the entire project.
+Object factories assist with immutability by providing new objects when needed. Furthermore, we can put constraints in factories to avoid unnecessary object instantiations in the entire project.
 
 Example 1
 
@@ -571,7 +568,7 @@ interface IOrder{
 }
 
 class Order {
-    private status!: string;
+    public status!: string;
 
     private constructor();
     private constructor(props: IOrder);
@@ -603,7 +600,7 @@ const newOrder = Order.create({status:OrderStatus.Pending});
 const jsonOrder = newOrder.toJSON();
 ```
 
-Combining both concepts:
+Piecing together both concepts:
 
 ```
 abstract class ViewModel {
@@ -657,11 +654,9 @@ cosnt productViewModel = ProductViewModel.create({
 
 **» Factory Checklist**<br/>
 
-- Are divided into several subtypes: abstract factory and factory method
-- Help to validate constraints before expensive and unnecessary object creations occur
-- Encapsulate complex object creations for better reusability and testability
-- Forces the team to clone objects in a predetermined way
-- Have obviously less syntax and are simpler to read
+- Helps to validate constraints before expensive object creations occur
+- Encapsulates complicated object creations toward better testability and readability
+- Forces the development team to clone objects in a predetermined way
 
 **» Data Mapper Pattern**<br/>
 
@@ -672,7 +667,7 @@ Mapping JSON-encoded server data in the frontend is mandatory if:
 
 - The model object defines any methods
 - The schema of the Web-API is different from its representation in the application
-- The chosen typing system favors classes over interfaces or type aliases
+- The chosen typing system favors classes over interfaces and type aliases
 
 The Mapper Pattern transfers data between two different schemas:
 
@@ -696,7 +691,7 @@ read(): Observable<Customer[]> {
 };
 ```
 
-The data mapper can be reused anywhere in the application to create the necessary model schema.
+The data mapper can be reused anywhere in the application to create the preferred model type.
 
 **» Structural Mapper Pattern**<br/>
 
@@ -1264,9 +1259,11 @@ export class CustomerRepository {
     public count(): Observable<number>;
     public contains(...): Observable<boolean>;
     public findById(...): Observable<Customer>{};
-    public findBySalaryType(...): Observable<Customer>{};
-    public findByCategory(...): Observable<Customer>{};
-    public groupBy(...): Observable<Customer>{};
+    public findBySalaryType(...): Observable<Customer[]>{};
+    public findByCriteria(criteria: CriteriaQuery): Observable<Customer[]>
+    public findByCategory(...): Observable<Customer[]>{};
+    public groupBy(...): Observable<Customer[]>{};
+    public add(...): Observable<void>{};
     public save(...): Observable<void>{};
     public update(...): Observable<void>{};
     public delete(...): Observable<void>{};
@@ -1293,9 +1290,9 @@ class CustomerRepository implements Repository<Customer, ID> {
 **» Repository Checklist**<br/>
 
 - Represents a reactive in-memory collection of objects
-- Implements the HTTP API to communicate to the server
+- Uses the HTTP API to communicate to the server
 - Implements the contract for reads and writes
-- Contract doesn't include creation of objects
+- Contract doesn't include object creations
 - Shouldn't provide data for presentation needs
 - Shouldn't contain a collection of value objects
 - Is the place to tailor pure models
