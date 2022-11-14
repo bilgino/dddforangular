@@ -410,28 +410,29 @@ if they don't share invariants in the domain:
 
 Since the navigation pattern of the Angular router engine adheres to the navigational behavior of hypermedia systems (HATEOAS) where URIs identify linked resources conform to RESTful
 practices, we must reexamine the idea of creating client-side aggregates. As an aggregate represents a group of related domain entities and value objects, wouldn't we then have to group
-linked resources?
+linked resources in the frontend?
 
-In the traditional data-centric approach, database tables and their relationships are pictured on a resource model (Active Record Pattern). But is this common and always true?
+In the traditional data-centric approach, database tables and their relationships are pictured on a resource model. But is this common and always true?
 Well, it all depends on the use case and how we interpret a REST resource! A REST resource could be a representation of a single object, database table or a materialized view.
 But how do we map a REST URL like `/addresses/22` to a client-side aggregate like `/orders/4` or `/customers/54`?
 
-When consuming fine-grained REST interfaces, we might have to piece together linked resources to create an aggregate for each initial routing event. Subsequently, an application or
-repository service provides the contract to process all actions. In this scenario, the repository service acts as an anti-corruption layer to the underlying
+When consuming fine-grained REST interfaces, we might have to piece together linked resources to create an aggregate for each initial routing event. Subsequently, an application- or
+repository service provides the contract to all actions. In this scenario, the repository service acts as an anti-corruption layer to the underlying
 resource model. Unfortunately, this approach doesn't play well, since the creation of an aggregate on the client side could result in countless additional HTTP requests
-(N + 1 Problem)! **Hence, the aggregate entity should be negotiated with the Web API as a conceptual whole!** We still can apply sub resource URLs like `/order/{id}/items/{id}` in the
+(N + 1 Problem)! **Hence, the aggregate entity should be negotiated with the Web API as a conceptual whole!** We still can configure sub resource URLs like `/order/{id}/items/{id}` in the
 router configuration to enable in-app-navigation.
 
 Even in the case of server-provided aggregates, it just doesn't feel quite right! **First, we shouldn't provide a pure domain entity to the client side**. Secondly, if
 the server-provided aggregate e.g. order aggregate `GET : /orders/22` already contains related data like the delivery address, then how do we update the delivery address?
-Either we call a method of the order aggregate `Order.updateDeliveryAddress(newAddress)` and subsequently process an HTTP update command: `PUT : /orders/22 : {order:{deliveryAddress...}}`.
-Or we ask a dedicated REST endpoint for updating the delivery address: `PUT : orders/22/addresses/5 : {deliveryAddress:{...}}`. Finally, the server-side request handler persists the delivery address to the database.
-The second approach seems to contradict the basic idea of an aggregate avoiding to reveal its internal state!?
+
+Either we call a method of the order aggregate `Order.updateDeliveryAddress(newAddress)` and subsequently process an HTTP update command: `PUT : /orders/22 : {order:{deliveryAddress...}}`
+or we ask a dedicated REST endpoint for updating the delivery address: `PUT : orders/22/addresses/5 : {deliveryAddress:{...}}`. Finally, the server-side request handler persists the delivery address to the database.
+The second approach seems to contradict the basic idea of an aggregate avoiding to reveal its internal state!
 
 Since the address resource is contextless, we shouldn't promote REST URLs like `/addresses/5`! As an example, calling `DELETE : /addresses/5 : {address:{id:5}}` might delete the address data
 of an ongoing order process! But now here's a question: can an address exists outside an order or customer context?
 
-Navigating a resource model and its relationships or adhering to use case(s) related aggregates can have a big impact on the frontend architectures!
+Navigating a fine-grained resource-oriented interface or adhering to the aggregate pattern has a big impact on the frontend architecture!
 For more information about the drawbacks of REST interfaces, visit the following website: https://www.howtographql.com/basics/1-graphql-is-the-better-rest/
 
 The aggregate entity should be negotiated with the Web API as a conceptual whole:
