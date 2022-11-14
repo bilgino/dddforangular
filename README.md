@@ -392,7 +392,7 @@ One of the most important aspects of the aggregate pattern is to protect it from
 - Multiple aggregates can reuse a value object
 - Each aggregate root gets its own repository service
 - It should never inject dependencies in the constructor or pass them into a method
-- Inter-aggregate invariants on bounded context level should be contained by domain or application services
+- Inter-Aggregate invariants inside a bounded context should be contained by domain- or application services
 
 The aggregate entity spans objects that are relevant to the use case and its invariants. They are treated as independent entities
 if they don't share invariants in the domain:
