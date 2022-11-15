@@ -345,7 +345,7 @@ So far, it may seem like a lot of code for a small payoff. However, as your fron
 the logical separation approach is adding more and more value to your software project. In agile processes like scrum where requirements
 remain unknown for a long time, it's hardly possible to tell from a few days or even a few weeks of what the upcoming sprints will bring.
 Hence, choosing the right development approach from the beginning of a software project is almost impossible. Later, we'll discuss the service layer pattern 
-in form of application-, domain- and infrastructure services conform to DDD practices.
+in form of application, domain and infrastructure services conform to DDD practices.
 
 Put simply, working with a rich domain model means more entities than services. Building behavior-rich domain models is a major objective in object-oriented design.
 
@@ -385,15 +385,15 @@ One of the most important aspects of the aggregate pattern is to protect it from
 - It validates all incoming actions and ensures that modifications don't contradict invariants
 - Invariants must be satisfied for each state change, when one part is updated, other parts might too 
 - The internal state can only be mutated by the contract of the aggregate
-- It never passes any reference of inside objects to the outside world
-- Objects from outside can't make changes to inside objects, they can only change the root object
-- Objects from inside can have references to outside objects
-- Each use case should have only one aggregate but can use other aggregates to retrieve information
-- Multiple aggregates can reuse a value object
+- It never passes any reference of inward objects to an outward world, it encapsulates access to its child aggregates
+- Objects from outside can't make changes to inward objects, they can only change the root object
+- Objects from inward can have references to outward objects
+- Each use case modifies only one aggregate but can access other aggregates to retrieve information
+- Several aggregates can reuse a value object
 - Each aggregate root gets its own repository service
 - It should never inject dependencies in the constructor or pass them into a method
-- Inter-Aggregate invariants inside a bounded context should be contained by domain- or application services
-
+- Inter-Aggregate invariants should be contained by domain or application services
+  
 The aggregate entity spans objects that are relevant to the use case and its invariants. They are treated as independent entities
 if they don't share invariants in the domain:
 
@@ -401,11 +401,11 @@ if they don't share invariants in the domain:
 
 **» From the Viewpoint of Frontend Development**
 
-- Aggregates don't publish domain events and won't get out‐of‐sync due to async observables
-- Inter-Aggregate references established by ID instead of object references are optional
-- Since the web browser is a monolithic environment with a homogenous stack, entities can be referenced anywhere in the application
+- Aggregates don't publish domain events 
+- Aggregate references established by IDs instead of object references are very unlikely and depended on the Web API interface
+- Since the web browser is a monolithic environment with a homogenous stack, entities can be used anywhere in the application
 - If the backend isn't aware of CQRS or BFF, frontend aggregates serve as the basis for tailoring view models
-- Transactional consistency boundaries aren't relevant 
+- Transactional consistency boundaries don't have any meaning
 
 **» Routing, REST and DDD Aggregates**<br/>
 
@@ -417,7 +417,7 @@ In the traditional data-centric approach, database tables and their relationship
 Well, it all depends on the use case and how we interpret a REST resource! A REST resource could be a representation of a single object, database table or a materialized view.
 But how do we map a REST URL like `/addresses/22` to a client-side aggregate like `/orders/4` or `/customers/54`?
 
-When consuming fine-grained REST interfaces, we might have to piece together linked resources to create an aggregate for each initial routing event. Subsequently, an application- or
+When consuming fine-grained REST interfaces, we might have to piece together linked resources to create an aggregate for each initial routing event. Subsequently, an application or
 repository service provides the contract to all actions. In this scenario, the repository service acts as an anti-corruption layer to the underlying
 resource model. Unfortunately, this approach doesn't play well, since the creation of an aggregate on the client side could result in countless additional HTTP requests
 (N + 1 Problem)! **Hence, the aggregate entity should be negotiated with the Web API as a conceptual whole!** We still can configure sub resource URLs like `/order/{id}/items/{id}` in the
@@ -463,6 +463,7 @@ The view model should hold the data necessary to render the view if:
 - Behaves like a value object, also called a DTO and is immutable
 - Can be tailored in an application service, view controller, factory or data mapper 
 - The name ends with the suffix -View or -ViewModel e.g. UserProfileView, UserListView, UserDetailsView
+- Contains only properties relevant to the view bindings, which improves performance
 
 **» Example**
 
@@ -870,7 +871,7 @@ we should avoid HATEOAS for web frontend applications!
 ## Services
 
 Singleton services are important conceptual building blocks in Angular applications. Most of the functionality that doesn't belong to view components typically
-resides in the service layer. We will implement the service layer pattern in form of application-, domain- and infrastructure services conform to DDD practices.
+resides in the service layer. We will implement the service layer pattern in form of application, domain and infrastructure services conform to DDD practices.
 
 **» Application Service Objects**<br/>
 
