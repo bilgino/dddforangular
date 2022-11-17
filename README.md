@@ -191,8 +191,8 @@ The view model and domain model should maintain different data structures to kee
 
 The anemic domain model is often used in CRUD-based web applications as value container without any behavior of its own. However, it's considered an anti-pattern
 because it doesn't contain business logic and can't protect its invariants. Furthermore, it causes tight coupling with the client code. Using behaviour-rich domain 
-models prevents domain logic from leaking into other layers or surrounding services. *However, if your frontend application doesn't contain any domain logic or client 
-specific business rules, it's better to use anemic domain models and validation services*! Hence, kick-off your frontend project with naked TypeScript objects!
+models prevents domain logic from leaking into other layers or surrounding services. However, if your frontend application doesn't contain any domain logic or client 
+specific business rules, it's better to use anemic domain models and validation services! Hence, kick-off your frontend project with naked TypeScript objects!
 The following example demonstrates the downsides of anemic domain models.
 
 Domain logic is coupled to the view controller:
@@ -216,7 +216,7 @@ class Employee {
 }
 ```
 
-In the first example, domain logic tends to be duplicated in distant components which may lead to data corruption.
+In the first example, the employee class properties are public and domain logic tends to be duplicated in distant components which may lead to data corruption.
 A rich domain model protects and encapsulates domain logic to ensure data consistency:
 
 **»  Effects of Rich Domain Models**<br/>
@@ -244,8 +244,8 @@ class Employee {
 }
 ```
 
-In the second example, domain logic is decoupled from the view controller class. Encapsulation protects the integrity of the model data.
-Pushing logic out of view controllers down to the model layer improves reusability and allows easier refactoring. 
+In the second example, domain logic is decoupled from the view controller class to protect the integrity of the model data.
+Pushing domain logic out of view controllers down to the model layer improves reusability and allows easier refactoring. 
 
 Consequently, using feature services (Transaction Script Implementation) for structural and behavioral modeling while domain models remain pure value containers is another
 common bad practice in Angular projects and known as the:
@@ -349,7 +349,7 @@ Hence, choosing the right development approach from the beginning of a software 
 in form of application, domain and infrastructure services conform to DDD practices.
 
 Put simply, working with a rich domain model means more entities than services. Building behavior-rich domain models is a major objective in object-oriented design.
-However, encapsulating domain logic in entities without the agreement of possibly multiple consumers to commit to the same business rules is essential!
+However, encapsulating domain logic in entities with the agreement of possibly multiple consumers to commit to the same business rules is essential!
 
 **» Domain Model (DDD Aggregate Pattern)**<br/>
 
@@ -665,6 +665,7 @@ cosnt productViewModel = ProductViewModel.create({
 - Validates constraints before expensive objects are instantiated
 - Encapsulates complex object creations toward better testability and readability
 - Forces the development team to clone objects in a predetermined way
+- Can be used for domain models as well as for view models
 
 **» Data Mapper Pattern**<br/>
 
@@ -699,7 +700,7 @@ read(): Observable<Customer[]> {
 };
 ```
 
-The data mapper can be reused anywhere in the application to create the preferred model type.
+The data mapper can be reused anywhere in the application to elaborate the preferred entity type.
 
 **» Structural Mapper Pattern**<br/>
 
@@ -859,9 +860,9 @@ const orders = [new Order().setAddress({...}).setCustomer({...})];
 
 **» REST, HATEOAS & Mapping**<br/>
 
-When building multi-layered web applications, data transformation is among the major challenges that occur when data traverses
-all layers - data flows up and down the stack! If the domain layer needs to be replicated to the client side, then a transformation of the
-server response schema to the domain model will be unavoidable:
+When building multi-layered web applications, data transformation is among the major challenges that occur when data traverses all layers - 
+data flows up and down the stack! If the domain layer needs to be replicated to the client side, then a transformation of the server response 
+schema to the domain model will be unavoidable:
 
 ![](src/assets/images/Mapper_Response.png)
 
@@ -920,8 +921,8 @@ class OrderService {
 
 When application services carry out use cases of the application, it might be a good idea to implement use cases that contain less logic directly in the view controller, 
 like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular 
-components such as resolvers, guards or interceptors. The main reason why we favor application services over view controllers is because during 
-router navigation our components will be destroyed. 
+components such as resolvers, guards or interceptors. The main reason why we favor application services over view controllers is because during router navigation our 
+components will be destroyed. 
 
 **» Domain Service Objects**<br/>
 
@@ -1092,9 +1093,7 @@ Typically, an application service provides query handlers to provide view models
 
 This might seem more complex than just using a single feature service for business logic and state management. A fixed layered architecture style would likely 
 be perceived as overkill for small applications and can lead us to a layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
-However, in agile processes like scrum where requirements can't be foreseen, it would be more efficient to take the risk and add a possibly unnecessary pass-through layer. 
-
-"You are gonna need it"!
+However, in agile processes like scrum where requirements can't be foreseen, it would be more efficient to take the risk and add a possibly unnecessary pass-through layer. "You are gonna need it"!
 
 **» CQRS using the Command Pattern**<br/>
 
