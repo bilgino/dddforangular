@@ -17,13 +17,13 @@ traditional data-centric approach and consider building blocks of Domain-Driven 
 
 Although functional programming has gained a strong foothold in frontend development in recent years, a consistent object-oriented approach might be better
 suited for TypeScript projects. Object-oriented programming allows us to develop a human-readable code base where the Ubiquitous Language helps to
-identify entities, define better semantics and advanced data types. The Angular framework and Domain-Driven Design embrace both paradigms.
+identify entities, define better semantics and advanced data types. The Angular framework and Domain-Driven Design embrace both programming paradigms.
 
 **» SOLID Principles**<br/>
 
 In object-oriented programming the SOLID principles of class design helps to make better design decisions regarding high cohesion and low coupling.
 Adhering to the Dependency Inversion Principle (DIP), we ensure that layers depend on abstraction as opposed to depending on concretion (Programming to an Interface).
-This means that high-level modules (application layer) shouldn't depend on low-level modules (domain layer).
+This means, that high-level modules (application layer) shouldn't depend on low-level modules (domain layer).
 
 **» Cross-Cutting Concerns**<br/>
 
@@ -36,7 +36,7 @@ resulting in loose coupling between the actual logic and infrastructure logic.
 
 A central concept of Domain-Driven Design is that the domain model is kept isolated from other concerns of the application. Ideally, the
 domain model is self-contained and focused on abstracting the business domain. Typically, frontend business applications validate business rules that
-are reflected in the presentation layer, especially in SPAs when navigating through HTML forms that have cross-dependencies in terms of composite business rules.
+are reflected in the presentation layer - especially in SPAs when navigating through HTML forms that have cross-dependencies in terms of composite business rules.
 
 As an example, in an ecommerce system, say the business demands that: "no order should be accepted, if the order items are less than 3".
 Adhering to this business rule, we wouldn't display the |place order| button, if the basket is empty. Other examples include offline applications (PWAs)
@@ -65,14 +65,14 @@ The multilayered architecture in Domain-Driven Design embraces the following con
 ![](src/assets/images/layers_vc.png)
 
 Domain-oriented layering is often considered the first structuring criterion in Angular applications to facilitate scalability through domain partitioning.
-Partitioning a domain model into domain fragments helps manage complexity. However, for many frontend applications, horizontal slicing is sufficient
-if the domain is simple and only contains a few objects. The main reasons for modular segmentation in Angular applications are lazy-loading, scoping and distribution.
+Partitioning a domain model into domain fragments helps manage complexity. However, for many frontend applications, horizontal slicing is sufficient provided that the 
+domain is simple and only contains a few objects. The main reasons for modular segmentation in Angular applications are lazy-loading, scoping, cohesion and distribution.
 
 **» Abstraction Layers**<br/>
 
 - Presentation Layer: GUI Components, Widgets, UI Services
 - Application Layer: Command & Query Handlers (Use Case Services) <br/>
-- Domain Layer: Entities (Write & Read), Value Objects, Factories, Domain Services, Repositories <br/>
+- Domain Layer: Entities, Value Objects, Factories, Domain Services, Repositories <br/>
 - Infrastructure Layer: 3rd-Party Libraries <br/>
 
 **» Service Layers**<br/>
@@ -189,12 +189,13 @@ The view model and domain model should maintain different data structures to kee
 - Rich Domain Model (Write Model)
 - View Model (Read Model)
 
-The anemic domain model is often used in CRUD-based web applications as value container without any behavior of its own (Active Record Pattern). However, it's considered an anti-pattern
-because it doesn't contain business logic and can't protect its invariants. Furthermore, it causes tight coupling with the client. Working with behaviour-rich domain models prevents
-domain logic from leaking into other layers or surrounding services. However, if your frontend application doesn't contain any domain logic, it's totally fine to use anemic models! Start your frontend project
-with naked objects! The following example demonstrates the negative side effect of using anemic domain models.
+The anemic domain model is often used in CRUD-based web applications as value container without any behavior of its own. However, it's considered an anti-pattern
+because it doesn't contain business logic and can't protect its invariants. Furthermore, it causes tight coupling with the client code. Using behaviour-rich domain 
+models prevents domain logic from leaking into other layers or surrounding services. *However, if your frontend application doesn't contain any domain logic or client 
+specific business rules, it's better to use anemic domain models and validation services*! Hence, kick-off your frontend project with naked TypeScript objects!
+The following example demonstrates the downsides of anemic domain models.
 
-Domain logic is coupled to the client (view controller):
+Domain logic is coupled to the view controller:
 
 **»  Effects of Anemic Domain Models** <br/>
 ```
@@ -243,8 +244,8 @@ class Employee {
 }
 ```
 
-In the second example, domain logic is decoupled from the view controller. Encapsulation protects the integrity of the model data.
-Pushing logic out of view controllers down to the model layer improves reusability and allows easier refactoring.
+In the second example, domain logic is decoupled from the view controller class. Encapsulation protects the integrity of the model data.
+Pushing logic out of view controllers down to the model layer improves reusability and allows easier refactoring. 
 
 Consequently, using feature services (Transaction Script Implementation) for structural and behavioral modeling while domain models remain pure value containers is another
 common bad practice in Angular projects and known as the:
@@ -348,6 +349,7 @@ Hence, choosing the right development approach from the beginning of a software 
 in form of application, domain and infrastructure services conform to DDD practices.
 
 Put simply, working with a rich domain model means more entities than services. Building behavior-rich domain models is a major objective in object-oriented design.
+However, encapsulating domain logic in entities without the agreement of possibly multiple consumers to commit to the same business rules is essential!
 
 **» Domain Model (DDD Aggregate Pattern)**<br/>
 
@@ -429,14 +431,14 @@ Even in the case of server-provided aggregates, it just doesn't feel quite right
 the server-provided aggregate e.g. order aggregate `GET : /orders/22` already contains related data like the delivery address, then how do we update the delivery address?
 
 Either we call a method of the order aggregate `Order.updateDeliveryAddress(newAddress)` and subsequently process an HTTP update command: `PUT : /orders/22 : {order:{deliveryAddress...}}`
-or we ask a dedicated REST endpoint for updating the delivery address: `PUT : orders/22/addresses/5 : {deliveryAddress:{...}}`. Finally, the server-side request handler persists the delivery address to the database.
-The second approach seems to contradict the basic idea of an aggregate avoiding to reveal its internal state!
+or we ask a dedicated REST endpoint for updating the delivery address: `PUT : orders/22/addresses/5 : {deliveryAddress:{...}}`. Finally, the server-side request handler persists the payload to the database.
+The second approach seems to contradict the basic idea of an aggregate avoiding to reveal its internal state, when having a separate addresses resource endpoint like `GET : /addresses/22`.
 
 Since the address resource is contextless, we shouldn't promote REST URLs like `/addresses/5`! As an example, calling `DELETE : /addresses/5 : {address:{id:5}}` might delete the address data
 of an ongoing order process! But now here's a question: can an address exists outside an order or customer context?
 
 Navigating a fine-grained resource-oriented interface or adhering to the aggregate pattern has a big impact on the frontend architecture!
-For more information about the drawbacks of REST interfaces, visit the following website: https://www.howtographql.com/basics/1-graphql-is-the-better-rest/
+For more information about the downsides of REST interfaces, visit the following website: https://www.howtographql.com/basics/1-graphql-is-the-better-rest/
 
 The aggregate entity should be negotiated with the Web API as a conceptual whole:
 
