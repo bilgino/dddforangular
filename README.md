@@ -181,7 +181,7 @@ Angular promotes two types of models:
 - `View Model`: This object represents data required by a view. It doesn't represent a real world object
 - `Domain Model`: This object represents data and logic related to the business domain
 
-The view model and domain model should maintain different data structures to keep the domain model independent of presentation needs.
+The view model and domain model should maintain different data structures to keep the domain model independent of presentation concerns.
 
 **» Implementation Patterns**<br/>
 
@@ -384,15 +384,17 @@ One of the most important aspects of the aggregate pattern is to protect it from
 - It has global identity (ID), state, lifecycle and serves as a consistency boundary
 - It validates all incoming actions and ensures that modifications don't contradict invariants
 - Invariants must be satisfied for each state change, when one part is updated, other parts might too 
-- The internal state can only be mutated by the contract of the aggregate
-- It never passes any reference of inward objects to an outward world, it encapsulates access to its child aggregates
-- Objects from outside can't make changes to inward objects, they can only change the root object
-- Objects from inward can have references to outward objects
+- The internal state should only be mutated by the contract of the aggregate
+- It never passes any reference of inside objects to the outside world, it encapsulates access to its children
+- Objects from outside can't make changes to inside objects, they can only change the root object
+- Objects from inside can hold references to outside objects
 - Each use case modifies only one aggregate but can access other aggregates to retrieve information
 - Several aggregates can reuse a value object
 - Each aggregate root gets its own repository service
-- It should never inject dependencies in the constructor or pass them into a method
-- Inter-Aggregate invariants should be contained by domain or application services
+- It should never inject dependencies in the constructor
+- The internal object graph should be no more than two levels deep
+- It should avoid exposing getters and setters to protect internals 
+- Inter-Aggregate invariants can be contained by domain or application services
   
 The aggregate entity spans objects that are relevant to the use case and its invariants. They are treated as independent entities
 if they don't share invariants in the domain:
@@ -401,11 +403,11 @@ if they don't share invariants in the domain:
 
 **» From the Viewpoint of Frontend Development**
 
-- Aggregates don't publish domain events 
-- Aggregate references established by IDs instead of object references are very unlikely and depended on the Web API interface
-- Since the web browser is a monolithic environment with a homogenous stack, entities can be used anywhere in the application
+- Aggregates don't need to publish domain events due to reactive state management
+- Aggregate references hold by ID or object references are dependent on the Web API interface (HATEOAS etc.)
 - If the backend isn't aware of CQRS or BFF, frontend aggregates serve as the basis for tailoring view models
-- Transactional consistency boundaries don't have any meaning
+- Encapsulation can be broken when processing view model mappings
+- Transactional consistency boundaries are irrelevant
 
 **» Routing, REST and DDD Aggregates**<br/>
 
@@ -554,6 +556,7 @@ class OrderFactory {
     public static create() {
       return new Order();
     }
+    public static validate(){}
     public static clone(order: Order) {}
     public static deepClone(order: Order) {}
 }
@@ -985,7 +988,7 @@ where we need to piece together multiple resources to provide a rich (view) mode
 
 ![](src/assets/images/Up_Down_Flow.png)
 
-The domain model focuses on business logic rather than presentation needs. Having a view model provider to manage complicated page flows and user
+The domain model focuses on business logic rather than presentation concerns. Having a view model provider to manage complicated page flows and user
 interfaces allows us to query data for specific view patterns. A view model provider is the perfect place to pre-compute filtering and 
 sorting logic (https://angular.io/guide/styleguide#style-04-13). That is, the CQRS pattern helps to avoid over-bloated all-in-one models.
 The CQRS pattern may overcomplicate the application design, instead of simplifying it. Use it with care!
@@ -1296,7 +1299,7 @@ class CustomerRepository implements Repository<Customer, ID> {
 - Uses the HTTP API to communicate to the server
 - Implements the contract for reads and writes
 - Contract doesn't include object creations
-- Shouldn't provide data for presentation needs
+- Shouldn't provide data for presentation concerns
 - Shouldn't contain a collection of value objects
 - Is the place to tailor pure models
 
