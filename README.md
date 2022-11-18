@@ -409,7 +409,6 @@ if they don't share invariants in the domain:
 - Aggregate references hold by ID or object references are dependent on the Web API interface (HATEOAS etc.)
 - If the backend isn't aware of CQRS or BFF, frontend aggregates serve as the basis for tailoring view models
 - Encapsulation can be broken when processing view model mappings
-- Transactional consistency boundaries are irrelevant
 
 **» Routing, REST and DDD Aggregates**<br/>
 
@@ -1300,9 +1299,9 @@ class CustomerRepository implements Repository<Customer, ID> {
 - Uses the HTTP API to communicate to the server
 - Implements the contract for reads and writes
 - Contract doesn't include object creations
-- Shouldn't provide data for presentation concerns
+- Contract only allows to query the whole aggregate
 - Shouldn't contain a collection of value objects
-- Is the place to tailor pure models
+- Is the place to tailor pure models out of DTOs
 
 ## UI State
 
