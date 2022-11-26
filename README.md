@@ -142,8 +142,11 @@ Following checklist helps to facilitate the orchestration of ngModules:<br/>
 - Module content comprises only Angular components. Interfaces, POTOs etc. are not in the module scope
 - Transitive dependencies aren't visible, **reexport** them to make them available to other modules
 
+**» Modules vs Standalone Components**<br/>
+
 As the number of module types can become overwhelming and difficult to apply correctly, it can lead developers to make incorrect decisions.
-Every module type serves a different purpose! In the context of domain architecture and domain partitioning, domain modules serve as the basis for our domain-oriented development approach.
+Every module type serves a different purpose! In the context of domain architecture and domain partitioning, we can omit domain modules as the basis 
+for our domain-oriented development approach and use standalone components available from Angular 15 (https://angular.io/guide/standalone-components).
 
 **» Bounded Context Pattern**<br/>
 
