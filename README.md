@@ -463,10 +463,12 @@ The view model should hold the data necessary to render the view if:
 
 **» View Model Checklist**<br/>
 
-- Is located in the domain layer 
-- Can use domain entities, domain services, specifications to compute values
-- Behaves like a value object, also called a DTO and is immutable
-- Can be tailored in an application service, view controller, factory or data mapper 
+- Can be located in the domain layer or application layer 
+- Can use domain entities, domain services or specifications to compute values
+- Can use the `inject()` function to inject dependencies like domain services etc.
+- Can behave like a Rich View Model that contains presentation logic
+- Can also behave like a value object, also called a DTO that is immutable
+- Can be tailored in a command or query handler, view controller, factory or data mapper 
 - The name ends with the suffix -View or -ViewModel e.g. UserProfileView, UserListView, UserDetailsView
 - Contains only properties relevant to the view bindings, which improves performance
 
@@ -559,7 +561,7 @@ class OrderFactory {
     public static create() {
       return new Order();
     }
-    public static validate(){}
+    private static validate(){}
     public static clone(order: Order) {}
     public static deepClone(order: Order) {}
 }
