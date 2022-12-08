@@ -139,7 +139,7 @@ Following checklist helps to facilitate the orchestration of ngModules:<br/>
 - **Don't** use the providers array of a module to register global services (use provideIn)
 - Module content is **private by default** and only visible to its own content
 - Module content can be exported without being imported
-- Module content comprises only Angular components. Interfaces, POTOs etc. are not in the module scope
+- Module content comprises only Angular components. Interfaces, POTOs etc. aren't in the module scope
 - Transitive dependencies aren't visible, **reexport** them to make them available to other modules
 
 **» Modules vs Standalone Components**<br/>
@@ -383,23 +383,22 @@ One of the most important aspects of the aggregate pattern is to protect it from
 
 **» Aggregate Entity Checklist**
 
-- It's a top-level business object (domain concept)
+- It's a top-level business object 
 - It's bounded from the viewpoint of a use case
 - It's based on a root entity and typically acts as a cluster of related domain entities and value objects
 - It has global identity (ID), state, lifecycle and serves as a consistency boundary
-- It validates all incoming actions and ensures that modifications don't contradict invariants
-- Invariants must be satisfied for each state change, when one part is updated, other parts might too 
-- The internal state may only be mutated by the contract of the aggregate
+- It validates all incoming actions and ensures that mutations don't contradict invariants
+- The internal state can only be mutated through the contract of the aggregate 
 - It never passes any reference of inside objects to the outside world, it encapsulates access to its children
-- Objects from outside can't make changes to inside objects
-- Objects from inside can hold references to outside objects
-- Each use case modifies only one aggregate but can access other aggregates to retrieve information
-- Each aggregate root gets its own repository service
-- It should never inject dependencies in the constructor
+- Objects from outside can't make changes to inside objects but objects from inside can hold references to outside objects
+- Each use case modifies only one aggregate but can use other aggregates to retrieve information
+- Each aggregate root entity gets its own repository service
+- It shouldn't inject dependencies in the constructor because it makes unit testing more difficult
 - The internal object graph should be no more than two levels deep
-- It doesn't expose getters and setters to protect internals 
-- Inter-Aggregate invariants can be pushed to domain or application services
-  
+- It doesn't expose `getters` and `setters` to protect internals 
+- Inter-Aggregate invariants can be moved to domain services or application services
+- Value Objects are modeled as record types of aggregates, they have no ID and are never part of a collection
+
 The aggregate entity spans objects that are relevant to the use case and its invariants. They are treated as independent entities
 if they don't share invariants in the domain:
 
@@ -466,11 +465,11 @@ The view model should hold the data necessary to render the view if:
 - Can be located in the domain layer or application layer 
 - Can use domain entities, domain services or specifications to compute values
 - Can use the `inject()` function to inject dependencies like domain services etc.
-- Can behave like a Rich View Model that contains presentation logic
+- Can behave like a Rich View Model that contains presentation logic methods
 - Can also behave like a value object, also called a DTO that is immutable
 - Can be tailored in a command or query handler, view controller, factory or data mapper 
 - The name ends with the suffix -View or -ViewModel e.g. UserProfileView, UserListView, UserDetailsView
-- Contains only properties relevant to the view bindings, which improves performance
+- Contains only `string` properties relevant to the view bindings, which improves performance
 
 **» Example**
 
@@ -669,6 +668,7 @@ cosnt productViewModel = ProductViewModel.create({
 - Encapsulates complex object creations toward better testability and readability
 - Forces the development team to clone objects in a predetermined way
 - Can be used for domain models as well as for view models
+- Can help to provide and manage dependencies (domain services)
 
 **» Data Mapper Pattern**<br/>
 
