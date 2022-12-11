@@ -1297,7 +1297,11 @@ interface Repository<T, ID> {
     save(entity: T): ID;
 }
 
-class CustomerRepository implements Repository<Customer, ID> {
+class CustomerRepository implements Repository<Customer, number> {
+    constructor(private customers: Customer[]){}
+}
+
+class CustomerRepository extends PagingAndSortingRepository<Customer, number>
     constructor(private customers: Customer[]){}
 }
 ```
