@@ -127,7 +127,7 @@ Angular's module system gives a clean design response:
 `Service Module`: Application wide services as singletons e.g. *LoggerService*<br/>
 `Shared Module`: Highly reusable components as non-singletons e.g. *DropDownComponent, PaginatorComponent*<br/>
 `Domain Module`: Domain modules such as *OrderModule* (Bounded Context) or *SalesModule* (Bounded Context)<br/>
-`Widget Module`: Highly cohesive and reusable widgets e.g. *MatSidenavModule, MatSnackBarModule* <br/>
+`Widget Module`: Highly cohesive and reusable widgets e.g. *MatSidenavModule, MatSnackBarModule* (SCAM) <br/>
 
 **» Module Checklist**<br/>
 
@@ -407,6 +407,7 @@ if they don't share invariants in the domain:
 **» From the Viewpoint of Frontend Development**
 
 - Aggregates don't need to publish domain events due to reactive state management
+- Aggregates provide predictable state though transactional consistency boundaries
 - Aggregate references hold by ID or object references are dependent on the Web API interface 
 - If the backend isn't aware of CQRS or BFF, frontend aggregates serve as the basis for tailoring view models
 - Encapsulation can be broken when processing view model mappings
@@ -926,6 +927,8 @@ When application services carry out use cases of the application, it might be a 
 like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with further Angular 
 components such as resolvers, guards or interceptors. The main reason why we favor application services over view controllers is because during router navigation our 
 components will be destroyed. 
+
+![](src/assets/images/app_service.PNG)
 
 **» Domain Service Objects**<br/>
 
