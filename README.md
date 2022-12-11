@@ -383,21 +383,22 @@ One of the most important aspects of the aggregate pattern is to protect it from
 
 **» Aggregate Entity Checklist**
 
-- It's a top-level business object 
+- It's a top-level core business object 
 - It's bounded from the viewpoint of a use case
 - It's based on a root entity and typically acts as a cluster of related domain entities and value objects
 - It has global identity (ID), state, lifecycle and serves as a consistency boundary
 - It validates all incoming actions and ensures that mutations don't contradict invariants
-- The internal state can only be mutated through the contract of the aggregate 
-- It never passes any reference of inside objects to the outside world, it encapsulates access to its children
-- Objects from outside can't make changes to inside objects but objects from inside can hold references to outside objects
+- The internal state may only be mutated by the aggregate's contract  
+- References of inside objects are never passes to the outside world, they encapsulate access to children
+- Outside objects can't make changes to inside objects but inside objects can hold references to outside objects
 - Each use case modifies only one aggregate but can use other aggregates to retrieve information
 - Each aggregate root entity gets its own repository service
 - It shouldn't inject dependencies in the constructor because it makes unit testing more difficult
 - The internal object graph should be no more than two levels deep
 - It doesn't expose `getters` and `setters` to protect internals 
-- Inter-Aggregate invariants can be moved to domain services or application services
-- Value Objects are modeled as record types of aggregates, they have no ID and are never part of a collection
+- Inter-Aggregate invariants can be placed in domain services
+- Value Objects are modeled as record types, they have no ID and are never part of a collection
+- Aggregate references hold by ID are incorporated with aggregate factory methods
 
 The aggregate entity spans objects that are relevant to the use case and its invariants. They are treated as independent entities
 if they don't share invariants in the domain:
