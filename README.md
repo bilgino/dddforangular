@@ -64,9 +64,9 @@ The multilayered architecture in Domain-Driven Design embraces the following con
 
 ![](src/assets/images/layers_vc.png)
 
-Domain-oriented layering is often considered the first structuring criterion in Angular applications to facilitate scalability through domain partitioning.
-Partitioning a domain model into domain fragments helps manage complexity. However, for many frontend applications, horizontal slicing is sufficient provided that the 
-domain is simple and only contains a few objects. The main reasons for modular segmentation in Angular applications are lazy-loading, scoping, cohesion and distribution.
+Domain-oriented layering (domain modules) is often considered the first structuring criterion in Angular applications. However, for many frontend applications horizontal slicing is sufficient, 
+implied that the domain is simple and only consists of few objects. The main reasons for modular segmentation in Angular applications are lazy-loading, scoping, cohesion and distribution.
+With Angular 15 and the SA components API, domain modules can now be considered optional.
 
 **» Abstraction Layers**<br/>
 
@@ -86,7 +86,7 @@ domain is simple and only contains a few objects. The main reasons for modular s
 
 - Application layer - Data Validation Errors: Data types (null, undefined), format (length, empty, whitespace), schema (email, credit-card)
 - Domain layer - Business Rule Violations: Business Rules, Business Invariants<br/>
-- Infrastructure layer: JSON, XML serialization, HTTP Status<br/>
+- Infrastructure layer: JSON, XML serialization, HTTP Status, ERROR Handling<br/>
 
 **» Angular Adoption**<br/>
 
