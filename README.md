@@ -924,8 +924,8 @@ class OrderService {
 ``` 
 
 When application services carry out use cases of the application, it might be a good idea to implement use cases that contain less logic directly in the view controller, 
-like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with further Angular 
-components such as resolvers, guards or interceptors. The main reason why we favor application services over view controllers is because during router navigation our 
+like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular 
+artifacts such as resolvers, guards, components or interceptors. The main reason why we favor application services over view controllers is because during router navigation our 
 components will be destroyed. 
 
 ![](src/assets/images/app_service.PNG)
