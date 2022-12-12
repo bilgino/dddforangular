@@ -998,9 +998,9 @@ where we need to piece together multiple resources to provide a rich (view) mode
 
 ![](src/assets/images/Up_Down_Flow.png)
 
-The domain model focuses on business logic rather than presentation concerns. Having a view model provider to manage complicated page flows and user
+The domain model focuses on business logic, not presentation needs. Using a view model provider to manage complicated page flows and user
 interfaces allows us to query data for specific view patterns. A view model provider is the perfect place to pre-compute filtering and 
-sorting logic (https://angular.io/guide/styleguide#style-04-13). That is, the CQRS pattern helps to avoid over-bloated all-in-one models.
+sorting logic (https://angular.io/guide/styleguide#style-04-13). That is, the CQRS pattern helps to avoid over-bloated all-in-one models!
 The CQRS pattern may overcomplicate the application design, instead of simplifying it. Use it with care!
 
 CQRS in the frontend has many advantages:
@@ -1039,9 +1039,7 @@ class ProductsService {
         }),
         shareReplay(1)
     );
-     
-    private constructor(){}
-    
+         
     public createProduct(){}   
     
     public updateProduct(){}
@@ -1059,7 +1057,7 @@ class ProductsService {
 }
 ```
 
-The single feature service approach makes it difficult to gather data from multiple sources and can lead to circular dependencies when injected other feature services.
+The single feature service approach makes it difficult to gather data from multiple sources and can lead to circular dependencies when injected to other feature services.
 
 **» CQRS using Feature Services for Writes and Reads**
 
@@ -1099,7 +1097,7 @@ Typically, an application service provides query handlers to provide view models
 ![](src/assets/images/QuerySideService.PNG)
 
 This might seem more complex than just using a single feature service for business logic and state management. A fixed layered architecture style would likely 
-be perceived as overkill for small applications and can lead us to a layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
+be perceived as overkill for small applications and can lead to a layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
 However, in agile processes like scrum where requirements can't be foreseen, it would be more efficient to take the risk and add a possibly unnecessary pass-through layer. "You are gonna need it"!
 
 **» CQRS using the Command Pattern**<br/>
