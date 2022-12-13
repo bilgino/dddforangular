@@ -66,7 +66,7 @@ The multilayered architecture in Domain-Driven Design embraces the following con
 
 Domain-oriented layering (domain modules) is often considered the first structuring criterion in Angular applications. However, for many frontend applications horizontal slicing is sufficient, 
 implied that the domain is simple and only consists of few objects. The main reasons for modular segmentation in Angular applications are lazy-loading, scoping, cohesion and distribution.
-With Angular 15 and the SA components API, domain modules can now be considered optional.
+With Angular 15 and the SA components API, domain modules are now optional.
 
 **» Abstraction Layers**<br/>
 
@@ -464,7 +464,7 @@ The view model should hold the data necessary to render the view if:
 
 **» View Model Checklist**<br/>
 
-- Can be located in the domain layer or application layer 
+- Can be placed in the domain layer or application layer 
 - Can use domain entities, domain services or specifications to compute values
 - Can use the `inject()` function to inject dependencies like domain services etc.
 - Can behave like a Rich View Model that contains presentation logic methods
@@ -898,7 +898,7 @@ The purpose of an application service is to orchestrate workflows and to define 
 @Injectable()
 class ApplicationService {
 
-  constructor(){}
+  constructor(private repository: Repository){}
 
   firstUseCase(){}
   secondUseCase(){}
@@ -1127,6 +1127,8 @@ class Order {
         return new OrderForCatalogView(this.orderId);
     }
 }
+
+const OrderForCataglogView = new Order().getOrderForCatalogView();
 ```
 
 Elaborating view models directly in domain entities violates the single responsibility rule!
@@ -1150,6 +1152,8 @@ class Order extends OrderViewModel {
     private orderId: number;
     private quantity: number; 
 }
+
+const OrderForCataglogView = new Order().getOrderForCatalogView();
 ``` 
 
 If a view model requires multiple sources, we can build a dedicated class in form of a query handler service to provide view models for individual view patterns.
@@ -1291,9 +1295,9 @@ export class CustomerRepository {
 Of course, we can create generically typed repository interfaces:
 
 ```
-interface Repository<T, ID> {
-    findById(id: ID): T;
-    save(entity: T): ID;
+interface Repository<T, K> {
+    findById(id: K): T;
+    save(entity: T): K;
 }
 
 class CustomerRepository implements Repository<Customer, number> {
@@ -1308,11 +1312,11 @@ class CustomerRepository extends PagingAndSortingRepository<Customer, number>
 **» Repository Checklist**<br/>
 
 - Represents a reactive in-memory collection of objects
-- Uses the HTTP API to communicate transactions to the server
-- Implements the contract for queries and commands
-- Contract doesn't include object creations
-- Contract only allows to query the whole aggregate
-- Shouldn't contain a collection of value objects
+- Uses the HTTP API to communicate the backend server
+- Defines the contract for reads and writes 
+- Contract excludes the creation of object 
+- Contract only allows to query aggregates
+- Doesn't contain a collection of value objects
 - Is the place to elaborate pure models out of server DTOs
 
 ## UI State
