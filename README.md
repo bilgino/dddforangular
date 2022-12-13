@@ -929,8 +929,6 @@ like in the MVC pattern. However, we don't want to hide use cases from the rest 
 artifacts such as resolvers, guards, components or interceptors. The main reason why we favor application services over view controllers is because during router navigation our 
 components will be destroyed. 
 
-![](src/assets/images/app_service.PNG)
-
 **» Domain Service Objects**<br/>
 
 The purpose of a domain service is to provide a set of business tasks that don't fit inside entities or value objects.
@@ -1095,6 +1093,10 @@ class QueryHandlers {
 Typically, an application service provides query handlers to provide view models out of domain state. 
 
 ![](src/assets/images/QuerySideService.PNG)
+
+Workflow of the Application Service:
+
+![](src/assets/images/app_service.PNG)
 
 This might seem more complex than just using a single feature service for business logic and state management. A fixed layered architecture style would likely 
 be perceived as overkill for small applications and can lead to a layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
