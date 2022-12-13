@@ -963,7 +963,7 @@ class MoneyTransferService {
 }
 ``` 
 
-Sometimes it's difficult to make a clear separation between application and domain services. An important indication is that the name of 
+Sometimes it's difficult to make a clear separation between application services and domain services. An important indication here is that the name of 
 the service isn't the decisive factor but rather the task that needs to be performed. When in doubt, we can omit domain services. 
 
 **» Infrastructure Service Objects**<br/>
@@ -979,7 +979,7 @@ We typically create stateful services, if we need to share data across component
 Adhering to DDD concepts, we'll apply the repository pattern in favor of an active data store. The repository pattern acts as a reactive storage unit
 for globally accessible data that can be used by other independent components. Repositories aren't only for entities, but for all types of objects
 including view models. Repositories often act as an anti-corruption layer enabling us to create objects without their structure
-being influenced by the underlying Web-API.
+being influenced by the underlying API.
 
 In addition, we'll also apply the CQRS pattern to stem the heavy-lift when building complicated page flows and user interfaces.
 The CQRS pattern helps to satisfy different view patterns with the respective data model. State transitions are immediately reflected 
@@ -1302,10 +1302,12 @@ interface Repository<T, K> {
     save(entity: T): K;
 }
 
+@Injectable()
 class CustomerRepository implements Repository<Customer, number> {
     constructor(){}
 }
 
+@Injectable()
 class CustomerRepository extends PagingAndSortingRepository<Customer, number>
     constructor(){}
 }
