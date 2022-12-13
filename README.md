@@ -346,7 +346,7 @@ which has the following advantages:
 - Single storage unit for (immutable) data structures
 
 So far, it may seem like a lot of code for a small payoff. However, as your frontend application grows and becomes large in its lifespan,
-the logical separation approach is adding more and more value to your software project. In agile processes like scrum where requirements
+the logical separation approach is adding more and more value to your software project. In agile processes like Scrum where requirements
 remain unknown for a long time, it's hardly possible to tell from a few days or even a few weeks of what the upcoming sprints will bring.
 Hence, choosing the right design approach at the beginning of a software project is almost impossible. Later, we'll discuss the service layer pattern 
 in form of application, domain and infrastructure services conform to Domain-Driven Design practices.
@@ -925,8 +925,8 @@ class OrderService {
 ``` 
 
 When application services carry out use cases of the application, it might be a good idea to implement use cases that contain less logic directly in the view controller, 
-like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular 
-artifacts such as resolvers, guards, components or interceptors. The main reason why we favor application services over view controllers is because during router navigation our 
+like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular artifacts 
+such as resolvers, guards, components or interceptors. The main reason why we favor application services over view controllers is because during router navigation our 
 components will be destroyed. 
 
 **» Domain Service Objects**<br/>
@@ -945,7 +945,7 @@ The purpose of a domain service is to provide a set of business tasks that don't
 @Injectable()
 class DomainService {
 
-  constructor(){}
+  constructor(private repository: Repository){}
   
   firstBusinessTask(){}
   secondBusinessTask(){}
@@ -1094,13 +1094,13 @@ Typically, an application service provides query handlers to provide view models
 
 ![](src/assets/images/QuerySideService.PNG)
 
-Workflow of the Application Service:
+Reactive workflow of an application service:
 
 ![](src/assets/images/app_service.PNG)
 
 This might seem more complex than just using a single feature service for business logic and state management. A fixed layered architecture style would likely 
 be perceived as overkill for small applications and can lead to a layered cake anti-pattern. The level of abstraction is up to the developer and the incoming requirements.
-However, in agile processes like scrum where requirements can't be foreseen, it would be more efficient to take the risk and add a possibly unnecessary pass-through layer. "You are gonna need it"!
+However, in agile processes like Scrum where requirements can't be foreseen, it would be more efficient to take the risk and add a possibly unnecessary pass-through layer. "You are gonna need it"!
 
 **» CQRS using the Command Pattern**<br/>
 
@@ -1303,11 +1303,11 @@ interface Repository<T, K> {
 }
 
 class CustomerRepository implements Repository<Customer, number> {
-    constructor(private customers: Customer[]){}
+    constructor(){}
 }
 
 class CustomerRepository extends PagingAndSortingRepository<Customer, number>
-    constructor(private customers: Customer[]){}
+    constructor(){}
 }
 ```
 
