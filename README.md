@@ -409,7 +409,7 @@ if they don't share invariants in the domain:
 **» From the Viewpoint of Frontend Development**
 
 - Aggregates don't need to publish domain events due to reactive state management
-- Aggregates provide predictable state though transactional consistency boundaries
+- Aggregates provide predictable state through transactional consistency boundaries
 - Aggregate references hold by ID or object references are dependent on the Web API interface 
 - If the backend isn't aware of CQRS or BFF, frontend aggregates serve as the basis for tailoring view models
 - Encapsulation can be broken when processing view model mappings
@@ -927,7 +927,7 @@ class OrderService {
 
 When application services carry out use cases of the application, it might be a good idea to implement use cases that contain less logic directly in the view controller, 
 like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular artifacts 
-such as resolvers, guards, components or interceptors. The main reason why we favor application services over view controllers is because during router navigation our 
+such as *resolvers, guards, components or interceptors*. The main reason why we favor application services over view controllers is because during router navigation our 
 components will be destroyed. 
 
 **» Domain Service Objects**<br/>
