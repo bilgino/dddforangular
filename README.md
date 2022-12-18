@@ -188,9 +188,9 @@ The view model and domain model should maintain different data structures to kee
 
 **» Implementation Patterns**<br/>
 
-- Anemic Domain Model (Write Model)
-- Rich Domain Model (Write Model)
-- View Model (Read Model)
+- Anemic Domain Model 
+- Rich Domain Model 
+- View Model
 
 The anemic domain model is often used in CRUD-based web applications as value container without any behavior of its own. However, it's considered an anti-pattern
 because it doesn't contain business logic and can't protect its invariants. Furthermore, it causes tight coupling with the client code! Using behaviour-rich domain 
