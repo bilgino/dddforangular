@@ -1074,8 +1074,8 @@ class CommandHandlers {
       private repository: Repository                                                   
       ){}
       
-  handleUseCaseCommand1(cm1): void {}
-  handleUseCaseCommand2(cm2): void {}
+  handleUseCaseCommand1(data): void {}
+  handleUseCaseCommand2(data): void {}
 }
 
 @Injectable()
@@ -1085,8 +1085,8 @@ class QueryHandlers {
       private repository: Repository             
       ){}
 
-  handleUseCaseQuery1():ViewModel1 {}
-  handleUseCaseQuery2(qm):ViewModel2 {}
+  handleUseCaseQuery1(data):ViewModel1 {}
+  handleUseCaseQuery2(data):ViewModel2 {}
 }
 ```
 **» CQ(R)S using Application Services**<br/>
