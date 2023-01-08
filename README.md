@@ -16,13 +16,13 @@ traditional data-driven approach and consider concepts of Domain-Driven Design f
 ## Object-Oriented Design
 
 Although functional programming has gained a strong foothold in frontend development in recent years, a consistent object-oriented approach might be better
-suited for TypeScript projects. Object-oriented programming allows us to develop a human-readable code base, better semantics and advanced data types. 
+suited for JavaScript/TypeScript projects. Object-oriented programming allows us to develop a human-readable and explicit code base with advanced data types. 
 The Angular framework and Domain-Driven Design embrace both programming paradigms.
 
 **» SOLID Principles**<br/>
 
 In object-oriented programming the SOLID principles of class design helps to make better design decisions regarding high cohesion and low coupling.
-Adhering to the Dependency Inversion Principle (DIP), we ensure that layers depend on abstraction as opposed to depending on concretion (Programming to an Interface).
+Adhering to the dependency rule (DIP), we ensure that layers depend on abstraction as opposed to depending on concretion (Programming to an Interface).
 This means, that high-level modules (Application Layer) shouldn't depend on low-level modules (Domain Layer).
 
 **» Cross-Cutting Concerns**<br/>
@@ -50,7 +50,7 @@ which might better meet your needs. Before starting using advanced concepts we s
 
 ## Multilayered architecture
 
-Considering multilayered architecture, the question arises of how to organize multiple layers in SPAs? This question refers to code splitting,
+Considering multilayered architecture, the question arises of how to organize multiple layers in frontend applications? This question refers to code splitting,
 communication across layers and demanding logic from services.
 
 The multilayered architecture in Domain-Driven Design embraces the following conceptional layers:
@@ -63,13 +63,13 @@ The multilayered architecture in Domain-Driven Design embraces the following con
 
 ![](src/assets/images/layers_vc.png)
 
-Domain-oriented layering (domain modules) is often considered the first structuring criterion in Angular applications. However, for many frontend applications horizontal slicing is sufficient, 
-implied that the domain is simple and only consists of few objects. The main reasons for modular segmentation in Angular applications are lazy-loading, scoping, cohesion and distribution.
-With Angular 15 and the SA components API, domain modules are now optional.
+Domain-oriented layering using domain modules is often considered the first structuring criterion in Angular applications. However, for many frontend applications horizontal slicing is sufficient, 
+unless the domain is simple and only consists of a few objects. The main reasons for modular segmentation in Angular applications are lazy-loading, scoping, cohesion and distribution.
+With Angular 15 and the SA components API, domain modules are now optional!
 
 **» Abstraction Layers**<br/>
 
-- Presentation Layer: GUI Components, Widgets, UI Services
+- Presentation Layer: GUI Components, Widgets, UI Services 
 - Application Layer: Command & Query Handlers (Application Services) <br/>
 - Domain Layer: Entities, Value Objects, Factories, Domain Services, Repositories <br/>
 - Infrastructure Layer: 3rd-Party Libraries <br/>
@@ -85,7 +85,7 @@ With Angular 15 and the SA components API, domain modules are now optional.
 
 - Application layer - Data Validation Errors: Data types (null, undefined), format (length, empty, whitespace), schema (email, credit-card)
 - Domain layer - Business Rule Violations: Business Rules, Business Invariants<br/>
-- Infrastructure layer: JSON, XML serialization, HTTP Status, ERROR Handling<br/>
+- Infrastructure layer: JSON, XML serialization, HTTP Status Codes, ERROR Handling<br/>
 
 **» Angular Adoption**<br/>
 
@@ -105,7 +105,7 @@ Infrastructure layer: *Persistence, Caching, Messaging, Crypto, Converter, Trans
 # Angular Core Patterns
 
 The core patterns of Angular such as modules, services, components, factories etc. already complies with Domain-Driven Design concepts and
-strives two of the most important software design principles, which are single responsibility (SRP) and separation of concerns (SoC).
+strives two of the most important software design principles, which are Single Responsibility (SRP) and Separation of Concerns (SoC).
 
 ## Modules
 
@@ -135,17 +135,14 @@ Following checklist helps to facilitate the orchestration of ngModules:<br/>
 - Every component, directive and pipe must belong to **one** and **only one** module
 - **Never** re-declare these elements in another module
 - **Don't** share contents of a domain module, instead add reusable elements to a shared module
-- **Don't** use the providers array of a module to register global services (use provideIn)
 - Module content is **private by default** and only visible to its own content
 - Module content can be exported without being imported
-- Module content comprises only Angular components. Interfaces, POTOs etc. aren't in the module scope
 - Transitive dependencies aren't visible, **reexport** them to make them available to other modules
 
-**» Modules vs. Standalone Components**<br/>
+**» NgModules vs. Standalone Components**<br/>
 
 As the number of module types can become overwhelming and difficult to apply correctly, it can lead developers to make incorrect decisions.
-Every module type serves a different purpose! In the context of domain architecture and domain partitioning, we can omit domain modules as the basis 
-for our domain-oriented development approach and use standalone components available from Angular 15 (https://angular.io/guide/standalone-components).
+Every module type serves a different purpose! In the context of domain-oriented development, we can also omit domain modules and use standalone components available from Angular 15 (https://angular.io/guide/standalone-components).
 
 **» Bounded Context Pattern**<br/>
 
@@ -166,7 +163,7 @@ The interrelations between Angular, REST and DDD aggregates requires more labor 
 
 **» Folder Structure**<br/>
 
-A common practice in Angular projects is to structure the code into `/core`, `/shared`, `/features` folders according to **LIFT** and the angular.io styleguide:
+A common practice in Angular projects is to structure code into `/core`, `/shared`, `/features` folders according to **LIFT** and the angular.io styleguide:
 https://angular.io/guide/styleguide#overall-structural-guidelines. This will be the basis for our domain-oriented folder structure:
 
 ![](src/assets/images/scaffolding.png)
@@ -176,15 +173,15 @@ application. But keep in mind, that a domain-oriented abstraction is the key.
 
 ## Models
 
-The model in the classic MVC pattern is a representation of application data. The model contains code to create, read, update and delete or
-transform model data. It stores the domain knowledge and is similar to the repository pattern!
+The model in the classic MVC pattern is a representation of application data. It stores the domain knowledge and contains code to create, read, update, delete or
+transform model data. 
 
-Angular promotes two types of models:
+There are two important types of models:
 
 - `View Model`: This object represents data required by a view. It doesn't represent a real world object
 - `Domain Model`: This object represents data and logic related to the business domain
 
-The view model and domain model should maintain different data structures to keep the domain model independent of presentation concerns.
+The differentiation between models helps to keep the domain model independent of presentation concerns.
 
 **» Implementation Patterns**<br/>
 
@@ -193,10 +190,14 @@ The view model and domain model should maintain different data structures to kee
 - View Model
 
 The anemic domain model is often used in CRUD-based web applications as value container without any behavior of its own. However, it's considered an anti-pattern
-because it doesn't contain business logic and can't protect its invariants. Furthermore, it causes tight coupling with the client code! Using behaviour-rich domain 
-models prevents domain logic from leaking into other layers or surrounding services. However, if your frontend application doesn't contain any domain logic or 
-business rule variations, it's totally fine to use anemic domain models and validation services! Hence, kick-off the frontend project with naked TypeScript 
-objects and expand them when necessary! The following example shows the downsides of anemic domain models in frontend applications.
+because it doesn't contain domain logic and can't protect its invariants. Furthermore, it causes tight coupling with the client code! Using behaviour-rich domain 
+models instead, prevents domain logic from leaking into other layers or surrounding services. 
+
+However, if your frontend application doesn't contain domain logic or business rule customization, then it's totally acceptable to use anemic domain models and 
+dedicated validation services (e.g. Specification Pattern)! Sometimes data validation need to be delayed in frontend applications in order to process a business task, 
+in particular when navigating through a wizard-style HTML Form, where we might need to submit form data at the last step of the wizard. In such cases, it wouldn't play well if 
+invariants were coded in domain entities and invoked immediately. Hence, kick-off the frontend project with naked TypeScript objects and expand them 
+with methods if appropriate! There is no golden rule! The following example shows the downsides of anemic domain models in frontend applications.
 
 Domain logic is coupled to the view controller or service object:
 
@@ -249,6 +250,7 @@ class Employee {
 
 In the second example, domain logic is decoupled from the view controller class to protect the integrity of the model data.
 Pushing domain logic out of view controllers down to the model layer improves reusability and allows easier refactoring. 
+However, it doesn't allow data validation at a later point in time, everytime we call `Employee.salaryIncreaseBy(106)` it will immediately throw an error.
 
 Consequently, using feature services for structural and behavioral modeling while domain models remain pure value containers is another
 bad practice in Angular projects and known as the:
@@ -288,12 +290,13 @@ class AccountService {
     constructor(private accountRepository: AccountRepository){}  
     
     public changeBalance(id: number, amount: number): Observable<void> {
-        return this.accountRepository.findByIdOrNull(id).pipe(
-          map((account: Account | null) => {
+        return this.accountRepository.findById(id).pipe(
+          tap((account: Account) => {
             account.changeBalance(amount);
             this.accountRepository.save(account);
           }),
-          mapTo(undefined)
+          catchError(err),
+          mapTo(void)
         )
     }
     
@@ -304,9 +307,9 @@ class AccountService {
 class Account {
     private id!: number;
     private balance!: number;
-    private static AMOUNT_MAX_VALID = 1000;
+    private readonly AMOUNT_MAX_VALID = 1000;
     
-    constructor(){}
+    constructor(...){}
     
     public getId(): number {
       return this.id;
@@ -322,8 +325,7 @@ class Account {
 
 @Injectable()
 class AccountRepository {
-    private accounts : Account[] = [new Account(1, 4500), new Account(2, 2340)];
-    private accounts$ = new BehaviorSubject<Account[]>(accounts);
+    private accounts$ = new BehaviorSubject<Account[]>([new Account(1, 4500), new Account(2, 2340)]);
     
     constructor(private httpClient: HttpClient){}
     
@@ -341,9 +343,10 @@ which has the following advantages:
 - Better semantics and human-readable code
 - Easier refactoring and unit testing
 - Code reusability and discoverability
+- Layer-based error handling `throw new DomainError("Domain Layer: Could not find an item with id '${Id}'");`
 - Protection of invariants and data integrity
-- Reactive state can be attached to any other component
-- Single storage unit for (immutable) data structures
+- Reactive state can be attached to any other service
+- Single storage unit for immutable or mutable data structures
 
 So far, it may seem like a lot of code for a small payoff. However, as your frontend application grows and becomes large in its lifespan,
 the logical separation approach is adding more and more value to your software project. In agile processes like Scrum where requirements
@@ -894,6 +897,8 @@ The purpose of an application service is to orchestrate workflows and to define 
 - They may use a domain service to perform a domain-specific task
 - They are also the place to elaborate view models out of domain state
 - Application service methods are also called command or query handlers
+- The contract is explicit about use cases and doesn't only perform CRUD operations like in REST APIs
+- Reuse application services in other application services if not only state is important, but the use case
 
 ```
 @Injectable()
@@ -924,6 +929,9 @@ class OrderService {
   getOrderForDetailsView(): OrderForDetailsView{}
 }
 ``` 
+
+- `Command Handlers:` Retrieve data, validate domain rules, mutate state and return the result as success or failure
+- `Query Handlers:` Gather and transform data to tailor a view model representation out of domain state
 
 When application services carry out use cases of the application, it might be a good idea to implement use cases that contain less logic directly in the view controller, 
 like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular artifacts 
@@ -1005,8 +1013,8 @@ The CQRS pattern may overcomplicate the application design, instead of simplifyi
 CQRS in the frontend has many advantages:
 
 - Separating concerns of each data model
-- Unidirectional data flow
-- Immutable view models comply with the `.onPush` strategy
+- Unidirectional data flow, where the write-side can be mutable and the read-side is immutable
+- Immutable view models comply with the `.onPush` strategy to improve render performance
 - sort() and filter() pipes can be detached from templates (https://angular.io/guide/styleguide#do-not-add-filtering-and-sorting-logic-to-pipes)
 
 The view model provider may appear in different forms. It may appear in form of a query method, a resolver or a query object:
@@ -1323,6 +1331,7 @@ class CustomerRepository extends PagingAndSortingRepository<Customer, number>
 - Contract only allows to query aggregates
 - Doesn't contain a collection of value objects
 - Is the place to elaborate pure models out of server DTOs
+- Reuse repositories in other application services if only state is important
 
 ## UI State
 
