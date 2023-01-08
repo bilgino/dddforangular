@@ -16,7 +16,7 @@ traditional data-driven approach and consider concepts of Domain-Driven Design f
 ## Object-Oriented Design
 
 Although functional programming has gained a strong foothold in frontend development in recent years, a consistent object-oriented approach might be better
-suited for JavaScript/TypeScript projects. Object-oriented programming allows us to develop a human-readable and explicit code base with advanced data types. 
+suited for JavaScript/TypeScript projects. Object-oriented programming allows us to develop a human-readable and explicit code base using advanced data types. 
 The Angular framework and Domain-Driven Design embrace both programming paradigms.
 
 **» SOLID Principles**<br/>
@@ -409,11 +409,44 @@ if they don't share invariants in the domain:
 
 ![](src/assets/images/Aggregate_BR.PNG)
 
+Example of an order aggregate REST call `GET : /orders/745`:
+
+```
+{
+  "order": {
+      "id": 745
+      "total": "$599",
+      "date": "December 23, 2022 09:22",
+      "customer": {
+          "id": 112
+          "first-name": "Bill",
+          "last-name": "Burke",
+          "address": {
+              "street": "555 Beacon St.",
+              "city": "Boston",
+              "state": "MA",
+              "zip": 2115
+          },
+      }
+      "order-items": {
+          "order-item": {
+              "product": {
+                "id": "534",
+                "name": "iMax",
+                "cost": "$455.98"
+              },
+              "quantity": 3
+          }
+      }
+  }
+}
+```
+
 **» From the Viewpoint of Frontend Development**
 
 - Aggregates don't need to publish domain events due to reactive state management
-- Aggregates provide predictable state through transactional consistency boundaries
-- Aggregate references hold by ID or object references are dependent on the Web API interface 
+- Aggregates provide predictable state using transactional consistency boundaries
+- Holding aggregate references by ID or object references is dependent on the Web API interface 
 - If the backend isn't aware of CQRS or BFF, frontend aggregates serve as the basis for tailoring view models
 - Encapsulation can be broken when processing view model mappings
 
@@ -725,21 +758,24 @@ interface IOrder {
     id: number;
     status: Status;
     total: number;
+    address: Address;
 }
 
 class Order {
     public id; 
     public status; 
     public total;
+    public address;
     
     constructor(data: Partial<IOrder>) {
-       this.id = data.id;
-       this.status = data.status;
-       this.total = data.total
+       this.id = data && data.id || null;
+       this.status = data && data.status || null;
+       this.total = data && data.total || null
+       this.address = data && data.address || null;
     }
 }
 
-const orders = [new Order({id:22,status:Status.Pending,total:450})];
+const orders : Order[] = [new Order({id:22,status:Status.Pending,total:450})];
 ```
 
 Option 2 - Constructor Assignment with ES6+
@@ -770,7 +806,7 @@ class Order {
     }
 }
 
-const orders = [new Order({id:22,status:Status.Pending})];
+const orders : Order[] = [new Order({id:22,status:Status.Pending})];
 ```
 
 Option 3 - Constructor Assignment with Index Signature
@@ -786,7 +822,7 @@ class Order {
     }
 }
 
-const orders = [new Order({id:33,status:Status.PENDING})];
+const orders : Order[] = [new Order({id:33,status:Status.PENDING})];
 ```
 
 Abstract super class to decouple the constructor assignment:
@@ -804,7 +840,7 @@ abstract class IOrder {
 
 class Order extends IOrder {}
 
-const orders = [new Order({id:33,status:Status.PENDING})];
+const orders : Order[] = [new Order({id:33,status:Status.PENDING})];
 ```
 
 Unfortunately, index signature assignments don't support access modifier (public, private, protected).
@@ -831,7 +867,7 @@ class OrderMapper {
     }
 }
 
-const orders = [OrderMapper.mapToOrder(new Order(), {id:33,status:Status.PENDING})];
+const orders : Order[] = [OrderMapper.mapToOrder(new Order(), {id:33,status:Status.PENDING})];
 ```
 
 Option 5 - Builder Pattern
@@ -857,7 +893,7 @@ class Order {
     }
 }
 
-const orders = [new Order().setAddress({...}).setCustomer({...})];
+const orders : Order[] = [new Order().setAddress({...}).setCustomer({...})];
 ```
 
 **» Mapper Checklist**<br/>
@@ -930,8 +966,8 @@ class OrderService {
 }
 ``` 
 
-- `Command Handlers:` Retrieve data, validate domain rules, mutate state and return the result as success or failure
-- `Query Handlers:` Gather and transform data to tailor a view model representation out of domain state
+- `Command Handlers:` Retrieve and validate data, delegate domain rules, mutate state and return the result as success or failure
+- `Query Handlers:` Gather and transform dependencies and data to elaborate a view model representation out of domain state
 
 When application services carry out use cases of the application, it might be a good idea to implement use cases that contain less logic directly in the view controller, 
 like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular artifacts 
