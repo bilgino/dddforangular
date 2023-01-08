@@ -195,8 +195,8 @@ models instead, prevents domain logic from leaking into other layers or surround
 
 However, if your frontend application doesn't contain domain logic or business rule customization, then it's totally acceptable to use anemic domain models and 
 dedicated validation services (e.g. Specification Pattern)! Sometimes data validation need to be delayed in frontend applications in order to process a business task, 
-in particular when navigating through a wizard-style HTML Form, where we might need to submit form data at the last step of the wizard. In such cases, it wouldn't play well if 
-invariants were coded in domain entities and invoked immediately. Hence, kick-off the frontend project with naked TypeScript objects and expand them 
+in particular when navigating through a wizard-style HTML form, where we might need to submit form data at the last step of the wizard. In such cases, it wouldn't play well if 
+invariants were hardcoded into domain entities and invoked immediately. Hence, kick-off the frontend project with naked TypeScript objects and expand them 
 with methods if appropriate! There is no golden rule! The following example shows the downsides of anemic domain models in frontend applications.
 
 Domain logic is coupled to the view controller or service object:
