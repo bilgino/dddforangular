@@ -194,12 +194,13 @@ because it doesn't contain domain logic and can't protect its invariants. Furthe
 models instead, prevents domain logic from leaking into other layers or surrounding services. 
 
 However, if your frontend application doesn't contain domain logic or business rule customization, then it's totally acceptable to use anemic domain models and 
-dedicated validation services (e.g. Specification Pattern)! Sometimes data validation need to be delayed in frontend applications in order to process a business task, 
-in particular when navigating through a wizard-style HTML form, where we might need to submit form data at the last step of the wizard. In such cases, it wouldn't play well if 
-invariants were hardcoded into domain entities and invoked immediately. Hence, kick-off the frontend project with naked TypeScript objects and expand them 
+dedicated validation services! Sometimes data validation need to be delayed in frontend applications in order to process a business task, 
+in particular when navigating through a wizard-style HTML form, where we might need to submit data at the last step of the wizard. 
+
+In such cases, it wouldn't play well if invariants were hardcoded into domain entities and invoked immediately. Hence, kick-off the frontend project with naked TypeScript objects and expand them 
 with methods if appropriate! There is no golden rule! The following example shows the downsides of anemic domain models in frontend applications.
 
-Domain logic is coupled to the view controller or service object:
+Domain logic is coupled to the view controller class:
 
 **»  Effects of Anemic Domain Models** <br/>
 ```
@@ -220,8 +221,8 @@ class Employee {
 }
 ```
 
-In the first example, the employee class properties are public and domain logic tends to be duplicated in distant components which may lead to data corruption.
-A rich domain model protects and encapsulates domain logic to ensure data consistency:
+In the first example, the employee class properties are public and domain logic tends to be duplicated in distant components, which may lead to data corruption.
+A rich domain model protects and encapsulates domain logic to ensure data consistency.
 
 **»  Effects of Rich Domain Models**<br/>
 ```
@@ -250,7 +251,7 @@ class Employee {
 
 In the second example, domain logic is decoupled from the view controller class to protect the integrity of the model data.
 Pushing domain logic out of view controllers down to the model layer improves reusability and allows easier refactoring. 
-However, it doesn't allow data validation at a later point in time, everytime we call `Employee.salaryIncreaseBy(106)` it will immediately throw an error.
+However, it doesn't allow data validation at a later point in time, everytime we call `salaryIncreaseBy(106)` it will immediately throw an error.
 
 Consequently, using feature services for structural and behavioral modeling while domain models remain pure value containers is another
 bad practice in Angular projects and known as the:
@@ -258,10 +259,14 @@ bad practice in Angular projects and known as the:
 **» Fat Service, Skinny Model Pattern**<br/>
 
 ```
+interface Account {
+    id: number;
+    balance: number;
+}
+
 @Injectable()
 class AccountService {
-    accounts : Account[] = [{ id: 1, balance: 4500 }, { id: 2, balance: 2340 }];
-    accounts$ = new BehaviorSubject<Account[]>(accounts);
+    accounts$ = new BehaviorSubject<Account[]>([{ id: 1, balance: 4500 }, { id: 2, balance: 2340 }]);
     AMOUNT_MAX_VALID = 1000;
     
     constructor(private httpClient: HttpClient){}
@@ -340,10 +345,10 @@ class AccountRepository {
 In the preceding example, we separated the account feature service into three layers with different responsibilities,
 which has the following advantages:
 
-- Better semantics and human-readable code
+- Better semantics and human-readable code 
 - Easier refactoring and unit testing
 - Code reusability and discoverability
-- Layer-based error handling `throw new DomainError("Domain Layer: Could not find an item with id '${Id}'");`
+- Layer-based error handling `throw new DomainError("Could not find item with id ${Id}")`
 - Protection of invariants and data integrity
 - Reactive state can be attached to any other service
 - Single storage unit for immutable or mutable data structures
@@ -402,7 +407,7 @@ One of the most important aspects of the aggregate pattern is to protect it from
 - It doesn't expose `getters` and `setters` to protect internals 
 - Inter-Aggregate invariants can be placed in domain services
 - Value Objects are modeled as record types, they have no ID and are never part of a collection
-- Aggregate relations hold by IDs are incorporated through factory methods
+- Aggregate references hold by ID are incorporated with each other using factory methods
 
 The aggregate entity spans objects that are relevant to the use case and its invariants. They are treated as independent entities
 if they don't share invariants in the domain:
@@ -966,8 +971,8 @@ class OrderService {
 }
 ``` 
 
-- `Command Handlers:` Retrieve and validate data, delegate domain rules, mutate state and return the result as success or failure
-- `Query Handlers:` Gather and transform dependencies and data to elaborate a view model representation out of domain state
+`Command Handlers:` Retrieve and validate data, delegate domain rules, mutate state and return the result as success or failure
+`Query Handlers:` Gather and transform dependencies and data to elaborate a view model representation out of domain state
 
 When application services carry out use cases of the application, it might be a good idea to implement use cases that contain less logic directly in the view controller, 
 like in the MVC pattern. However, we don't want to hide use cases from the rest of the application! In addition, we might want to share logic with other Angular artifacts 
