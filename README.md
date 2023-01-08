@@ -45,9 +45,9 @@ An isolated domain layer allows us to avoid domain logic leaking into other laye
 the server upon every user action. Therefore, considering the domain layer pattern in frontend applications sounds like a good idea!
 
 It's fairly debatable whether higher granularity distributed across several layers introduce extra complexity in frontend applications. Consequently,
-many developers tend to lean toward weaker patterns because they see it as an unnecessary practice. For most web applications MV* or Flux/Redux are patterns,
-which might better meet your needs. Before starting using advanced concepts we should validate incoming requirements. Although the frontend usually doesn't take over 
-the business-critical part in a web application, the patterns of Domain-Driven Design helps to ensure better code maintainability.
+many developers tend to lean toward weaker patterns because they see it as an unnecessary practice. For most web applications patterns such as MV* or Flux/Redux might 
+better meet the requirements of the customer project. Although the frontend usually doesn't take over the business-critical part in a web application, the patterns of 
+Domain-Driven Design helps to ensure better code maintainability.
 
 ## Multilayered architecture
 
