@@ -35,7 +35,7 @@ cross-cutting dependencies in a loosely coupled way to prevent code scattering a
 
 A central concept of Domain-Driven Design is that the domain model is kept isolated from other concerns of the application. Ideally, the
 domain model is self-contained and focuses on abstracting the business domain. Typically, frontend business applications validate business rules that
-are reflected in the presentation layer - especially in SPAs when navigating through HTML forms that have dependencies in terms of composite business rules.
+are reflected in the presentation layer - particularly when navigating through HTML forms that have interrelations in terms of composite business rules.
 
 As an example, in an ecommerce system, say the business demands that: "No order should be accepted, if the order items are less than 3".
 Adhering to this business rule, we wouldn't display the |place order| button, if the basket is empty. Other examples include offline applications (PWAs)
@@ -46,7 +46,8 @@ the server upon every user action. Therefore, considering the domain layer patte
 
 It's fairly debatable whether higher granularity distributed across several layers introduce extra complexity in frontend applications. Consequently,
 many developers tend to lean toward weaker patterns because they see it as an unnecessary practice. For most web applications MV* or Flux/Redux are patterns,
-which might better meet your needs. Before starting using advanced concepts we should validate incoming requirements.
+which might better meet your needs. Before starting using advanced concepts we should validate incoming requirements. Although the frontend usually doesn't take over 
+the business-critical part in a web application, the patterns of Domain-Driven Design helps to ensure better code maintainability.
 
 ## Multilayered architecture
 
@@ -972,6 +973,7 @@ class OrderService {
 ``` 
 
 `Command Handlers:` Retrieve and validate data, delegate domain rules, mutate state and return the result as success or failure
+
 `Query Handlers:` Gather and transform dependencies and data to elaborate a view model representation out of domain state
 
 When application services carry out use cases of the application, it might be a good idea to implement use cases that contain less logic directly in the view controller, 
