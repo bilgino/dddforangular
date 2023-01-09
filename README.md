@@ -41,7 +41,7 @@ As an example, in an ecommerce system, say the business demands that: "No order 
 Adhering to this business rule, we wouldn't display the |place order| button, if the basket is empty. Other examples include offline applications (PWAs)
 where a significant part of the business logic may need to be replicated to the client side. Examples of such applications are stock trading applications or tax applications.
 
-An isolated domain layer allows us to avoid domain logic leaking into other layers or surrounding services. In addition, we don't want to command against
+An isolated domain layer allows us to avoid domain logic from leaking into other layers or surrounding services. In addition, we don't want to command against
 the server upon every user action. Therefore, considering the domain layer pattern in frontend applications sounds like a good idea!
 
 It's fairly debatable whether higher granularity distributed across several layers introduce extra complexity in frontend applications. Consequently,
@@ -195,11 +195,12 @@ because it doesn't contain domain logic and can't protect its invariants. Furthe
 models instead, prevents domain logic from leaking into other layers or surrounding services. 
 
 However, if your frontend application doesn't contain domain logic or business rule customization, then it's totally acceptable to use anemic domain models and 
-dedicated validation services! Sometimes data validation need to be delayed in frontend applications in order to process a business task, 
-in particular when navigating through a wizard-style HTML form, where we might need to submit data at the last step of the wizard. 
+dedicated validation services! Sometimes data validation need to be delayed in frontend applications in order to process a business task,
+particularly when navigating through a wizard-style HTML form, where we might need to submit data at the last step of progress. 
 
-In such cases, it wouldn't play well if invariants were hardcoded into domain entities and invoked immediately. Hence, kick-off the frontend project with naked TypeScript objects and expand them 
-with methods if appropriate! There is no golden rule! The following example shows the downsides of anemic domain models in frontend applications.
+In such cases, it wouldn't play well if invariants were hardcoded in domain entities and invoked immediately. We could define the domain model with 
+naked objects and expand them with appropriate methods if required! There is no golden rule! The following example shows the downsides of anemic domain models 
+in frontend applications.
 
 Domain logic is coupled to the view controller class:
 
