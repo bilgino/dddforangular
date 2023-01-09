@@ -198,7 +198,7 @@ However, if your frontend application doesn't contain domain logic or business r
 dedicated validation services! Sometimes data validation need to be delayed in frontend applications in order to process a business task,
 particularly when navigating through a wizard-style HTML form, where we might need to submit data at the last step of progress. 
 
-In such cases, it wouldn't play well if invariants were hardcoded in domain entities and invoked immediately. We could define the domain model with 
+In such cases, it wouldn't play well if invariants were hardcoded in domain entities and invoked immediately. We could start to define the domain model with 
 naked objects and expand them with appropriate methods if required! There is no golden rule! The following example shows the downsides of anemic domain models 
 in frontend applications.
 
