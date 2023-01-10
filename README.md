@@ -789,26 +789,26 @@ Option 2 - Constructor Assignment with ES6+
 
 ```
 class Order {
-    public id; 
-    public status; 
-    public total;
+    private id!: number;  
+    private status!: Status; 
+    private total!: number;
     
     constructor({ id, status, total = 0 }: Partial<IOrder>) {
-        Object.defineProperty(this, 'id', { value: id, writable: false });
+        Object.defineProperty(this, 'id', { value: id || null, writable: true });
         Object.assign(this, { status, total });
     }
 }
 
 class Order {
-    public id; 
-    public status; 
-    public total;
+    public id!: number; 
+    public total!: number;
+    public status!:Status; 
     
     constructor({ id, status, total }: Partial<IOrder>) {
         Object.defineProperties(this, {
-            id: { value: id, writable: false },
-            status: { value: status },
-            total: { value: total },
+            id: { value: id || null, writable: true },
+            total: { value: total || null , writable: true },
+            status: { value: status || null, writable: true },
         });
     }
 }
@@ -816,7 +816,7 @@ class Order {
 const orders : Order[] = [new Order({id:22,status:Status.Pending})];
 ```
 
-Option 3 - Constructor Assignment with Index Signature
+Option 3 - Constructor Assignment with Index Signature * REMOVE
 
 ```
 class Order {
@@ -832,7 +832,7 @@ class Order {
 const orders : Order[] = [new Order({id:33,status:Status.PENDING})];
 ```
 
-Abstract super class to decouple the constructor assignment:
+Abstract super class to decouple the constructor assignment * REMOVE
 
 ```
 abstract class IOrder {
